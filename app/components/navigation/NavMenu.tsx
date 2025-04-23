@@ -26,7 +26,7 @@ export interface NavMenuProps {
 /**
  * Composant `NavMenu` pour rendre un menu de navigation avec des éléments de menu et des icônes personnalisables
  *
- * @exemple
+ * @example
  * ```tsx
  * <NavMenu
  *   ariaLabel="Menu du panier"

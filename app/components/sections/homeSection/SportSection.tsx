@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { apiService } from "../../../services/apiService"
 
 /**
  * Type représentant un sport
@@ -14,17 +15,6 @@ export type SportType = {
   /** URL ou chemin vers l'image représentant le sport */
   image_url: string
 }
-
-/** Liste temporaire de noms de sports */
-const sportNames = [
-  'Athlétisme', 'Aviron', 'Badminton'
-]
-/** Liste temporaire de sports avec leurs propriétés */
-const tempSports: SportType[] = sportNames.map((name, index) => ({
-  id_sport: index + 1,
-  title: name,
-  image_url: 'https://placeholderjs.com/300x180'
-}))
 
 /**
  * Composant `SportSection` pour afficher une liste de sports avec un filtre de recherche sur les noms des sports
@@ -39,9 +29,10 @@ export const SportSection = ():React.JSX.Element => {
   // Déclaration d'un état local pour stocker les sports
   const [sports, setSports] = useState<SportType[]>([])
 
-  // Fonction pour récupérer les sports (simulée ici avec des données temporaires)
-  const getSports = () => {
-    setSports(tempSports)
+  // Fonction asynchrone pour récupérer la liste des sports depuis l'API
+  const getSports = async () => {
+    const tempSports = await apiService.get('/api/event/sports')
+    setSports(tempSports.data)
   }
 
   // Utilisation du hook useEffect pour récupérer les sports lors du premier rendu du composant

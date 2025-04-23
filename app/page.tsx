@@ -1,4 +1,5 @@
-import { Header } from "./components/Header";
+import { Header } from "./components/Header"
+import { SportSection } from "./components/sections/homeSection/SportSection"
 
 /**
  * Composant `Home` pour afficher la page d'accueil de l'application
@@ -9,6 +10,10 @@ export default function Home() {
 
     <>
       <Header />
+
+      <main>
+        <SportSection />
+      </main>
     </>
   )
 }

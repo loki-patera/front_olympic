@@ -1,5 +1,5 @@
 {
-  "entryPoints": ["./app/**/*.tsx", "./app/**/*.ts"],
+  "entryPoints": ["./app/**/*.tsx", "./app/**/*.ts", "./lib/**/*.ts"],
   "out": "docs",
   "name": "Documentation de la partie front-end du projet de la << Billetterie des JO >>",
   "exclude": ["**/__tests__/**"]

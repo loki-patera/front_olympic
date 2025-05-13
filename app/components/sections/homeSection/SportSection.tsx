@@ -1,59 +1,45 @@
 'use client'
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { apiService } from "../../../services/apiService"
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { SportProps } from '../../../interfaces'
+import { SportType } from '../../../types'
+import { useSportStore } from '../../../stores'
 
 /**
- * Type représentant un sport
- */
-export type SportType = {
-  /** Identifiant unique pour le sport */
-  id_sport: number
-  /** Nom du sport */
-  title: string
-  /** URL ou chemin vers l'image représentant le sport */
-  image_url: string
-}
-
-/**
- * Composant `SportSection` pour afficher une liste de sports avec un filtre de recherche sur les noms des sports
+ * Composant `SportSection` pour afficher les épreuves sportives avec un filtre de recherche.
  *
  * @example
  * ```tsx
- * <SportSection />
+ * <SportSection
+ *    sports={sports}
+ * />
  * ```
  */
-export const SportSection = ():React.JSX.Element => {
-
-  // Déclaration d'un état local pour stocker les sports
-  const [sports, setSports] = useState<SportType[]>([])
-
-  // Fonction asynchrone pour récupérer la liste des sports depuis l'API
-  const getSports = async () => {
-    const tempSports = await apiService.get('/api/event/sports')
-    setSports(tempSports.data)
-  }
-
-  // Utilisation du hook useEffect pour récupérer les sports lors du premier rendu du composant
-  useEffect(() => {
-    getSports()
-  }, [])
+export const SportSection: React.FC<SportProps> = ({
+  sports
+}) => {
 
   // Déclaration d'un état local pour stocker le texte de recherche
   const [searchSport, setSearchSport] = useState<string>("")
 
-  // Filtrage des sports en fonction du texte de recherche
+  // Filtrage des épreuves sportives en fonction du texte de recherche
   const filteredSports: SportType[] = sports.filter((sport) =>
     sport.title.toLowerCase().startsWith(searchSport.toLowerCase())
   )
 
+  // Récupération de la fonction pour mettre à jour l'épreuve sportive sélectionnée
+  const setSport = useSportStore((state) => state.setSport)
+
   // Utilisation du hook useRouter pour la navigation
   const router = useRouter()
 
-  // Fonction de gestion de la navigation vers la page de réservation des évènements
-  const handleNavigation = (): void => {
-    router.push("/")
+  // Gestion de l'événement de clic sur une épreuve sportive pour naviguer vers la page de réservation
+  const handleNavigation = (sport: SportType): void => {
+    // Mise à jour de l'épreuve sportive sélectionnée dans le store
+    setSport(sport.title)
+    // Navigation vers la page de réservation
+    router.push('/pages/booking')
   }
 
   return (
@@ -73,8 +59,7 @@ export const SportSection = ():React.JSX.Element => {
             // Gestion de l'événement de changement de valeur du champ de recherche
             onChange={(e) => setSearchSport(e.target.value)}
             placeholder="Entrez les premières lettres d'un sport ..."
-            className="border-2 border-yellowjo rounded-md p-2 w-full mb-4 focus:outline-none focus:ring
-              focus:ring-yellowjo"
+            className="border-2 border-yellowjo rounded-md p-2 w-full mb-4 focus:outline-none focus:ring focus:ring-yellowjo"
           />
         </div>
 
@@ -86,10 +71,10 @@ export const SportSection = ():React.JSX.Element => {
             >
               <img
                 className="h-48 w-full object-cover rounded-md transition-transform duration-300 hover:scale-110"
-                src={sport.image_url}
+                src={sport.image}
                 alt={sport.title}
                 // Gestion de l'événement de clic sur l'image pour naviguer vers la page de réservation
-                onClick={handleNavigation}
+                onClick={() => handleNavigation(sport)}
               />
               <p className="absolute text-xl font-semibold text-white bottom-1 left-2">{sport.title}</p>
             </div>

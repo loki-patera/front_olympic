@@ -1,5 +1,5 @@
-import Image from "next/image"
-import Link from "next/link"
+import Image from 'next/image'
+import Link from 'next/link'
 
 /**
  * Composant `Logo` pour afficher une image du logo dans un lien qui mène à la page d'accueil

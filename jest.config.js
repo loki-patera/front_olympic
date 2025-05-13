@@ -21,6 +21,7 @@ module.exports = {
   // Spécifie les fichiers à inclure dans la couverture
   collectCoverageFrom: [
     "app/**/*.{ts,tsx}", // Inclut tous les fichiers TypeScript et TSX dans le dossier app
+    "lib/**/*.{ts,tsx}", // Inclut tous les fichiers TypeScript et TSX dans le dossier lib
     "!**/node_modules/**", // Exclut les fichiers des modules node
     "!**/coverage/**" // Exclut les fichiers de couverture eux-mêmes
   ],

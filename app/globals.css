@@ -2,7 +2,9 @@
 
 @theme {
   --color-bluejo: #4bb1d7;
+  --color-bluejo-light: #6fc1df;
   --color-yellowjo: #ffbd59;
+  --color-yellowjo-light: #ffca7a;
 }
 
 @layer base {

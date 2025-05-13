@@ -30,7 +30,7 @@ Pour une installation en local via le terminal de commande, suivre les étapes s
   
   4. Créer un fichier `.env.local` dans le dossier `front_olympic` et intégrer cette variable :
       ```bash
-      NEXT_PUBLIC_API_HOST=http://127.0.0.1:8000
+      API_URL=http://127.0.0.1:8000
       ```
   
 ## Tests
@@ -50,7 +50,7 @@ Pour consulter le résultat des tests incorporés à l'application et réalisés
 Pour utiliser l'application en local, suivre les étapes suivantes :
 
   1. S'assurer que le serveur du côté back-end est lancé en amont
-      → Voir les étapes dans le fichier `README.md` du back-end [back_olympic](https://github.com/loki-patera/back_olympic)
+      → Voir les étapes dans le fichier `README.md` du back-end
 
   2. Lancer le serveur de développement :
       ```bash

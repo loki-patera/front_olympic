@@ -1,11 +1,12 @@
 'use client'
 
-import { useRouter } from "next/navigation"
-import Image from "next/image"
-import { CustomButton } from "./shared/CustomButton"
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { CustomButton } from './shared/CustomButton'
+import { useSportStore } from '../stores/sportStore'
 
 /**
- * Le composant `Header` représente la section principale d'en-tête de l'application
+ * Composant `Header` pour représenter la section principale d'en-tête de l'application.
  *
  * @example
  * ```tsx
@@ -14,12 +15,16 @@ import { CustomButton } from "./shared/CustomButton"
  */
 export const Header = ():React.JSX.Element => {
 
+  // Récupération de la fonction pour mettre à jour l'épreuve sportive sélectionnée
+  const setSport = useSportStore((state) => state.setSport)
+  
   // Utilisation du hook useRouter pour la navigation
   const router = useRouter()
 
-  // Fonction de gestion de la navigation vers la page de réservation des évènements
+  // Gestion de l'événement de clic sur le bouton `Réserver` pour naviguer vers la page de réservation
   const handleNavigation = (): void => {
-    router.push("/")
+    setSport("Toutes les épreuves sportives")
+    router.push("/pages/booking")
   }
 
   return (
@@ -40,7 +45,7 @@ export const Header = ():React.JSX.Element => {
                 Réservez vos places pour assister aux épreuves sportives des Jeux Olympiques de Paris 2024
               </p>
               <CustomButton
-                className="sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:w-auto mt-4 py-2.5"
+                className="bg-bluejo sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:w-auto mt-4 py-2.5"
                 label="Réserver"
                 // Gestion de l'événement de clic pour naviguer vers la page de réservation
                 onClick={handleNavigation}

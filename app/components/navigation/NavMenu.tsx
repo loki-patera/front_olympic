@@ -4,39 +4,39 @@ import { ShoppingCartIcon as ShoppingCartIconOutline, UserIcon as UserIconOutlin
 import { ShoppingCartIcon as ShoppingCartIconSolid, UserIcon as UserIconSolid } from '@heroicons/react/24/solid'
 
 /**
- * Types de propriétés pour le composant {@link NavMenu}
+ * Interface `NavMenuProps` définissant les propriétés du composant {@link NavMenu}.
+ * 
+ * @property ariaLabel - Libellé pour l'accessibilité, utilisé pour décrire le menu.
+ * @property colorIcon - Couleur de l'icône du menu.
+ * @property variant - Variante du menu, soit `cart` pour le panier, soit `user` pour l'utilisateur.
+ * @property menuItems - Liste des éléments de menu à afficher. Chaque élément de menu peut avoir une étiquette et un lien `href` optionnel.
+ * @property customMenuItems - Élément de menu personnalisable à afficher si défini, utilisé uniquement pour le dernier élément.
  */
 export interface NavMenuProps {
-  /** Libellé pour l'accessibilité, utilisé pour décrire le menu */
   ariaLabel: string
-  /** Couleur de l'icône du menu */
   colorIcon: string
-  /** Variante du menu, soit `cart` pour le panier, soit `user` pour l'utilisateur */
   variant: 'cart' | 'user'
-  /** Liste des éléments de menu à afficher */
-  /** Chaque élément de menu peut avoir une étiquette et un lien `href` optionnel */
   menuItems: {
     label: string
     href?: string
   }[]
-  /** Élément de menu personnalisable à afficher si défini, utilisé uniquement pour le dernier élément */
   customMenuItems?: React.ReactNode
 }
 
 /**
- * Composant `NavMenu` pour rendre un menu de navigation avec des éléments de menu et des icônes personnalisables
+ * Composant `NavMenu` pour rendre un menu de navigation avec des éléments de menu et des icônes personnalisables.
  *
  * @example
  * ```tsx
  * <NavMenu
- *   ariaLabel="Menu du panier"
- *   colorIcon="text-blue-500"
- *   variant="cart"
- *   menuItems={[
- *     { label: 'Votre panier est vide' },
- *     { label: 'Voir votre panier' },
- *   ]}
- *   customMenuItems={<button>Voir votre panier</button>}
+ *    ariaLabel="Menu du panier"
+ *    colorIcon="text-blue-500"
+ *    variant="cart"
+ *    menuItems={[
+ *      { label: 'Votre panier est vide' },
+ *      { label: 'Voir votre panier' }
+ *    ]}
+ *    customMenuItems={<button>Voir votre panier</button>}
  * />
  * ```
  */
@@ -77,9 +77,10 @@ export const NavMenu: React.FC<NavMenuProps> = ({
 
       <MenuItems
         transition
-        className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md divide-y divide-gray-100 bg-white py-1 ring-1 shadow-lg ring-black/5
-          transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out
-          data-leave:duration-75 data-leave:ease-in"
+        className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md divide-y divide-gray-100 bg-white
+          py-1 ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95
+          data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75
+          data-leave:ease-in"
       >
         {menuItems.map((item, index) => (
           <MenuItem key={index}>

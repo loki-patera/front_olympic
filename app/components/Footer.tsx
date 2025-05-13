@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { Logo } from "./shared/Logo"
+import Link from 'next/link'
+import { Logo } from './shared/Logo'
 
 /**
  * Composant `Footer` pour représenter le bas de chaque page du site contenant un logo, les mentions légales et les politiques de confidentialité

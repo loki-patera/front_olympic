@@ -36,17 +36,17 @@ export const Navbar = ():React.JSX.Element => {
 
             {/* Menu du panier */}
             <NavMenu
-              ariaLabel='Menu du panier'
-              colorIcon='text-yellowjo'
-              variant='cart'
+              ariaLabel="Menu du panier"
+              colorIcon="text-yellowjo"
+              variant="cart"
               menuItems={[
-                { label: 'Votre panier est vide' },
-                { label: 'Voir votre panier' }
+                { label: "Votre panier est vide" },
+                { label: "Voir votre panier" }
               ]}
               customMenuItems={
                 <CustomButton
-                  className='py-1'
-                  label='Voir votre panier'
+                  className="py-1 bg-bluejo"
+                  label="Voir votre panier"
                   // Gestion de l'événement de clic pour naviguer vers la page du panier
                   onClick={handleNavigation}
                 />
@@ -55,11 +55,11 @@ export const Navbar = ():React.JSX.Element => {
 
             {/* Menu de l'utilisateur */}
             <NavMenu
-              ariaLabel='Menu utilisateur'
-              colorIcon='text-bluejo'
-              variant='user'
+              ariaLabel="Menu utilisateur"
+              colorIcon="text-bluejo"
+              variant="user"
               menuItems={[
-                { label: 'Se connecter', href: '/' }
+                { label: "Se connecter", href: "/" }
               ]}
             />
 

@@ -1,41 +1,40 @@
 /**
- * Types de propriétés pour le composant {@link CustomButton}
+ * Interface `CustomButtonProps` définissant les propriétés du composant {@link CustomButton}.
+ * 
+ * @property className - Classes supplémentaires pour le style.
+ * @property label - Texte du bouton.
+ * @property type - Type de bouton (button, submit, reset).
+ * @property onClick - Action à exécuter lors du clic sur le bouton.
  */
 export interface CustomButtonProps {
-  /** Classes supplémentaires pour le style */
   className?: string
-  /** Texte du bouton */
   label: string
-  /** Action à exécuter lors du clic sur le bouton */
-  onClick?(): void
-  /** Type de bouton (button, submit, reset) */
   type?: "button" | "submit" | "reset"
+  onClick?(): void
 }
 
 /**
- * Composant réutilisable `CustomButton` pour afficher un élément bouton stylisé
+ * Composant réutilisable `CustomButton` pour afficher un élément bouton stylisé.
  *
  * @example
  * ```tsx
  * <CustomButton
- *  label="Réserver"
- *  onClick={handleClick}
- *  className="bg-blue-500"
+ *    className="bg-blue-500"
+ *    label="Réserver"
+ *    onClick={handleClick}
  * />
  * ```
  */
 export const CustomButton: React.FC<CustomButtonProps> = ({
+  className = "",
   label,
-  onClick,
   type = "button",
-  className = ""
+  onClick
 }) => {
 
   // Styles de base du bouton
-  const baseStyles = `px-7 border border-transparent text-base font-semibold rounded-md cursor-pointer
-    text-white hover:text-gray-700 bg-bluejo hover:bg-yellowjo
-    shadow-md shadow-gray-300
-    hover:ring-2 hover:ring-offset-2 hover:ring-bluejo`
+  const baseStyles = `px-4 border border-transparent font-semibold rounded-lg cursor-pointer text-white hover:text-gray-700
+    hover:bg-yellowjo-light shadow-md shadow-gray-300 hover:ring hover:ring-offset-2 hover:ring-bluejo`
 
   return (
 

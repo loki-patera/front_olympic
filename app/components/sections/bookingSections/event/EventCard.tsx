@@ -40,6 +40,9 @@ export const EventCard: React.FC<EventCardProps> = ({
   // État local pour gérer le chargement des compétitions
   const [loading, setLoading] = useState(false)
 
+  // État local pour gérer les erreurs lors de la récupération des compétitions
+  const [error, setError] = useState<string | null>(null)
+
   // Gestion de l'état d'ouverture du tiroir
   const handleToggleDrawer = async () => {
 
@@ -51,6 +54,8 @@ export const EventCard: React.FC<EventCardProps> = ({
 
       // Début du chargement
       setLoading(true)
+      // Réinitialisation de l'état d'erreur
+      setError(null)
       
       try {
         // Récupération des compétitions liées à l'événement sportif
@@ -59,7 +64,7 @@ export const EventCard: React.FC<EventCardProps> = ({
         setCompetitions(data)
       } catch (error) {
         // Gestion des erreurs lors de la récupération des compétitions
-        console.error("Erreur lors du chargement des compétitions :", error)
+        setError("Erreur lors du chargement des compétitions.")
       } finally {
         // Réinitialisation de l'état de chargement
         setLoading(false)
@@ -115,13 +120,16 @@ export const EventCard: React.FC<EventCardProps> = ({
         {/* Affichage des compétitions */}
         {isOpen && (
           <div
-            className={`absolute top-0 left-0 w-full h-78/100 bg-gray-50 shadow-lg p-3 rounded-lg transition-transform
-              duration-300 ${isOpen ? "translate-y-0" : "-translate-y-full"}`}
+            className="absolute top-0 left-0 w-full h-78/100 bg-gray-50 shadow-lg p-3 rounded-lg transition-transform duration-300 translate-y-0"
           >
             <div className="overflow-y-auto max-h-full h-full">
               {loading ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-gray-500">Chargement des compétitions...</p>
+                </div>
+              ) : error ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-red-500">{error}</p>
                 </div>
               ) : competitions ? (
                 <ul className="text-sm space-y-2 text-gray-500">

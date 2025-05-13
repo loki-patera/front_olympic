@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom'
 import ResizeObserver from 'resize-observer-polyfill'
 import 'whatwg-fetch'
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+
+mockAnimationsApi()
 
 // Ajout d'un polyfill pour ResizeObserver afin de simuler son comportement dans l'environnement de test
 global.ResizeObserver = ResizeObserver

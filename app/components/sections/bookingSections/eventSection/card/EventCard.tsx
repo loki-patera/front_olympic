@@ -1,19 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatDate, formatTime } from '../../../../../utils/dateUtils'
-import { EventProps } from '../../../../../interfaces'
 import { CustomButton } from '../../../../shared/CustomButton'
-import { CompetitionType } from '../../../../../types'
+import { CompetitionType, EventType, OfferType } from '../../../../../types'
 import { getCompetitionsByEvent } from '../../../../../../lib/api'
+import { OfferSelect, SeatSelect } from './offer'
 
 /**
- * Interface `EventCardProps`, qui hérite de {@link EventProps}, définissant les propriétés du composant {@link EventCard}.
+ * Interface `EventCardProps` définissant les propriétés du composant {@link EventCard}.
  * 
+ * @property event - Objet de type {@link EventType} représentant un événement sportif.
  * @property isOpen - Indique si le tiroir des compétitions est ouvert.
  * @property onToggle - Fonction pour gérer l'ouverture / fermeture du tiroir des compétitions.
+ * @property seats - Tableau des objets de type {@link OfferType} représentant les différents nombres de places.
+ * @property offers - Tableau des objets de type {@link OfferType} représentant les différentes offres.
  */
-export interface EventCardProps extends EventProps {
+export interface EventCardProps {
+  event: EventType
   isOpen: boolean
   onToggle(): void
+  seats: OfferType[]
+  offers: OfferType[]
 }
 
 /**
@@ -25,13 +31,17 @@ export interface EventCardProps extends EventProps {
  *    event={event}
  *    isOpen={true}
  *    onToggle={onToggle}
+ *    seats={seats}
+ *    offers={offers}
  * />
  * ``` 
  */
 export const EventCard: React.FC<EventCardProps> = ({
   event,
   isOpen,
-  onToggle
+  onToggle,
+  seats,
+  offers
 }) => {
 
   // État local pour stocker les compétitions liées à un événement sportif
@@ -101,6 +111,12 @@ export const EventCard: React.FC<EventCardProps> = ({
       }
     }
   }
+
+  // État local pour gérer le nombre de places sélectionnées
+  const [seatSelected, setSeatSelected] = useState<number>()
+
+  // État local pour gérer la récupération de la réduction de l'offre sélectionnée
+  const [discountRecovered, setDiscountRecovered] = useState<number>()
 
   return (
 
@@ -210,6 +226,22 @@ export const EventCard: React.FC<EventCardProps> = ({
 
         {/* Face arrière de la carte pour sélectionner un nombre de places, sélectionner une offre et afficher le prix de la réservation */}
         <div className="absolute inset-0 w-full h-full bg-white backface-hidden rounded-lg rotate-x-180">
+
+          <div className="flex flex-col items-center justify-center p-4">
+
+            <SeatSelect
+              seats={seats}
+              setSeatSelected={setSeatSelected}
+            />
+
+            <OfferSelect
+              offers={offers}
+              seatSelected={seatSelected}
+              setDiscountRecovered={setDiscountRecovered}
+            />
+
+          </div>
+
           <div className="absolute bottom-0 inset-x-0 px-4 pb-3">
             <div className="flex justify-between items-center">
               <CustomButton

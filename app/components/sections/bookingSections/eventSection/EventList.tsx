@@ -2,8 +2,21 @@
 
 import { useRef, useState } from 'react'
 import { EventCard } from './card/EventCard'
-import { EventListProps } from '../../../../interfaces'
+import { EventType, OfferType } from '../../../../types'
 import { useSportStore } from '../../../../stores'
+
+/**
+ * Interface `EventListProps` définissant les propriétés du composant {@link EventList}.
+ * 
+ * @property events - Tableau des objets de type {@link EventType} représentant les différents événements sportifs.
+ * @property seats - Tableau des objets de type {@link OfferType} représentant les différents nombres de places.
+ * @property offers - Tableau des objets de type {@link OfferType} représentant les différentes offres.
+ */
+export interface EventListProps {
+  events: EventType[]
+  seats: OfferType[]
+  offers: OfferType[]
+}
 
 /**
  * Composant `EventList` pour afficher une liste d'événements sportifs.
@@ -12,11 +25,15 @@ import { useSportStore } from '../../../../stores'
  * ```tsx
  * <EventList
  *    events={events}
+ *    seats={seats}
+ *    offers={offers}
  * />
  * ```
  */
 export const EventList: React.FC<EventListProps> = ({
-  events
+  events,
+  seats,
+  offers
 }) => {
 
   // Récupération de l'épreuve sportive sélectionnée
@@ -48,8 +65,8 @@ export const EventList: React.FC<EventListProps> = ({
   }
 
   // Filtrage des événements sportifs en fonction de l'épreuve sportive sélectionnée
-  const filteredEvents = sport && sport !== "Toutes les épreuves sportives"
-    ? events.filter((event) => event.sport.title === sport)
+  const filteredEvents = sport
+    ? events.filter((event) => event.sport.id_sport === sport.id_sport)
     : events
   
   return (
@@ -62,6 +79,8 @@ export const EventList: React.FC<EventListProps> = ({
             event={event}
             isOpen={openDrawerId === event.id_event}
             onToggle={() => handleToggleDrawer(event.id_event)}
+            seats={seats}
+            offers={offers}
           />
         ))}
       </div>

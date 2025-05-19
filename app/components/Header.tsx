@@ -23,7 +23,7 @@ export const Header = ():React.JSX.Element => {
 
   // Gestion de l'événement de clic sur le bouton `Réserver` pour naviguer vers la page de réservation
   const handleNavigation = (): void => {
-    setSport("Toutes les épreuves sportives")
+    setSport(null)
     router.push("/pages/booking")
   }
 

@@ -1,3 +1,5 @@
 export * from './competitionApi'
 export * from './eventApi'
+export * from './offerApi'
+export * from './seatApi'
 export * from './sportApi'

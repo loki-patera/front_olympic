@@ -3,7 +3,7 @@ import { formatDate, formatTime } from '../../../../../utils/dateUtils'
 import { CustomButton } from '../../../../shared/CustomButton'
 import { CompetitionType, EventType, OfferType } from '../../../../../types'
 import { getCompetitionsByEvent } from '../../../../../../lib/api'
-import { OfferSelect, SeatSelect } from './offer'
+import { BookingAmount, OfferSelect, SeatSelect } from './offer'
 
 /**
  * Interface `EventCardProps` définissant les propriétés du composant {@link EventCard}.
@@ -117,6 +117,24 @@ export const EventCard: React.FC<EventCardProps> = ({
 
   // État local pour gérer la récupération de la réduction de l'offre sélectionnée
   const [discountRecovered, setDiscountRecovered] = useState<number>()
+
+    // Vérification si les valeurs sont définies pour effectuer le calcul
+  const canCompute = seatSelected !== undefined && discountRecovered !== undefined && event.price !== undefined
+
+  // Calcul du sous-total
+  const subTotal = canCompute
+    ? (seatSelected * event.price)
+    : 0
+  
+  // Calcul de la réduction
+  const discount = canCompute
+    ? discountRecovered
+    : 0
+
+  // Calcul du prix total
+  const total = canCompute
+    ? subTotal - (subTotal * discount / 100)
+    : 0
 
   return (
 
@@ -240,6 +258,11 @@ export const EventCard: React.FC<EventCardProps> = ({
               setDiscountRecovered={setDiscountRecovered}
             />
 
+            <BookingAmount
+              subTotal={subTotal}
+              discount={discount}
+              total={total}
+            />
           </div>
 
           <div className="absolute bottom-0 inset-x-0 px-4 pb-3">
@@ -253,7 +276,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               <CustomButton
                 className="text-sm py-1 bg-green-500 text-white active:bg-green-600 shadow-green-200"
                 label="Réserver"
-                disabled
+                disabled={total === 0}
               />
             </div>
           </div>

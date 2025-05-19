@@ -1,5 +1,5 @@
 import { getEvents, getSports } from '../../../lib/api'
-import { EventList } from '../../components/sections/bookingSections/event/EventList'
+import { EventList } from '../../components/sections/bookingSections/eventSection/EventList'
 import { SportSelect } from '../../components/sections/bookingSections/SportSelect'
 import { EventType, SportType } from '../../types'
 

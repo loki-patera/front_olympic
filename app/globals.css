@@ -2,7 +2,8 @@
 
 @theme {
   --color-bluejo: #4bb1d7;
-  --color-bluejo-light: #6fc1df;
+  --color-bluejo-light: #b7e0ef;
+  --color-bluejo-dark: #3c8eac;
   --color-yellowjo: #ffbd59;
   --color-yellowjo-light: #ffca7a;
 }
@@ -29,4 +30,8 @@ body {
   z-index: -1;
   background-image: radial-gradient(circle, rgba(180, 180, 180, 0.2) 2.5px, transparent 2px);
   background-size: 25px 25px;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
 }

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, act } from "@testing-library/react"
-import { EventList } from "../../../../../../app/components/sections/bookingSections/event/EventList"
+import { EventList } from "../../../../../../app/components/sections/bookingSections/eventSection/EventList"
 import { useSportStore } from "../../../../../../app/stores/sportStore"
 import { EventType } from "../../../../../../app/types/eventType"
 

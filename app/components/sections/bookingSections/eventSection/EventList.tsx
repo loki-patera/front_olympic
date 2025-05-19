@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { EventCard } from './EventCard'
+import { EventCard } from './card/EventCard'
 import { EventListProps } from '../../../../interfaces'
 import { useSportStore } from '../../../../stores'
 

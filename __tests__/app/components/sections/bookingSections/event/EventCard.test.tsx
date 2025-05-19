@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
-import { EventCard } from "../../../../../../app/components/sections/bookingSections/event/EventCard"
+import { EventCard } from "../../../../../../app/components/sections/bookingSections/eventSection/card/EventCard"
 import * as api from "../../../../../../lib/api"
 import { EventType, SportType } from "../../../../../../app/types"
 import { CompetitionType, LocationType } from "../../../../../../app/types"

@@ -23,7 +23,7 @@ export const Header = ():React.JSX.Element => {
 
   // Gestion de l'événement de clic sur le bouton `Réserver` pour naviguer vers la page de réservation
   const handleNavigation = (): void => {
-    setSport("Toutes les épreuves sportives")
+    setSport(null)
     router.push("/pages/booking")
   }
 
@@ -45,7 +45,8 @@ export const Header = ():React.JSX.Element => {
                 Réservez vos places pour assister aux épreuves sportives des Jeux Olympiques de Paris 2024
               </p>
               <CustomButton
-                className="bg-bluejo sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:w-auto mt-4 py-2.5"
+                className="bg-bluejo text-white active:bg-bluejo-dark shadow-bluejo-light sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:w-auto
+                  mt-4 py-2.5"
                 label="Réserver"
                 // Gestion de l'événement de clic pour naviguer vers la page de réservation
                 onClick={handleNavigation}

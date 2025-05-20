@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { SportType } from '../types'
 
 /**
  * Interface `SportStore` définissant l'état de l'épreuve sportive sélectionnée pour le hook Zustand {@link useSportStore}.
@@ -7,8 +8,8 @@ import { create } from 'zustand'
  * @property setSport - Fonction pour mettre à jour l'épreuve sportive sélectionnée.
  */
 export interface SportStore {
-  sport: string | null,
-  setSport(newSport: string): void
+  sport: SportType | null,
+  setSport(newSport: SportType | null): void
 }
 
 /**
@@ -17,7 +18,7 @@ export interface SportStore {
  * @example
  * ```tsx
  * const { sport, setSport } = useSportStore()
- * setSport('Football')
+ * setSport(sport)
  * ```
  */
 export const useSportStore = create<SportStore>((set) => ({

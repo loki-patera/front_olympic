@@ -45,7 +45,7 @@ export const Navbar = ():React.JSX.Element => {
               ]}
               customMenuItems={
                 <CustomButton
-                  className="py-1 bg-bluejo"
+                  className="py-1 bg-bluejo text-white active:bg-bluejo-dark shadow-bluejo-light"
                   label="Voir votre panier"
                   // Gestion de l'événement de clic pour naviguer vers la page du panier
                   onClick={handleNavigation}

@@ -60,8 +60,8 @@ describe("Composant SportSection", () => {
     // Simule le clic sur l'image de l'épreuve sportive
     fireEvent.click(img)
 
-    // Vérifie que la fonction `setSport` a été appelée avec le titre de l'épreuve sportive
-    expect(mockSetSport).toHaveBeenCalledWith("Athlétisme")
+    // Vérifie que la fonction `setSport` a été appelée avec l'objet sport
+    expect(mockSetSport).toHaveBeenCalledWith({ id_sport: 1, title: "Athlétisme", image: "/athletisme.jpg" })
 
     // Vérifie que la fonction `router.push` a été appelée avec le chemin "/pages/booking"
     expect(pushMock).toHaveBeenCalledWith("/pages/booking")

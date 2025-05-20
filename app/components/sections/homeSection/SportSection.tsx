@@ -2,9 +2,17 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { SportProps } from '../../../interfaces'
 import { SportType } from '../../../types'
 import { useSportStore } from '../../../stores'
+
+/**
+ * Interface `SportListProps` définissant les propriétés du composant {@link SportSection}.
+ * 
+ * @property sports - Tableau des objets de type {@link SportType} représentant les différents épreuves sportives.
+ */
+export interface SportListProps {
+  sports: SportType[]
+}
 
 /**
  * Composant `SportSection` pour afficher les épreuves sportives avec un filtre de recherche.
@@ -16,7 +24,7 @@ import { useSportStore } from '../../../stores'
  * />
  * ```
  */
-export const SportSection: React.FC<SportProps> = ({
+export const SportSection: React.FC<SportListProps> = ({
   sports
 }) => {
 
@@ -37,7 +45,7 @@ export const SportSection: React.FC<SportProps> = ({
   // Gestion de l'événement de clic sur une épreuve sportive pour naviguer vers la page de réservation
   const handleNavigation = (sport: SportType): void => {
     // Mise à jour de l'épreuve sportive sélectionnée dans le store
-    setSport(sport.title)
+    setSport(sport)
     // Navigation vers la page de réservation
     router.push('/pages/booking')
   }

@@ -1,3 +1,5 @@
+export const revalidate = 60
+
 import { getSports } from '../lib/api'
 import { Header } from './components/Header'
 import { SportSection } from './components/sections/homeSection/SportSection'

@@ -29,4 +29,13 @@ describe("Page d'accueil", () => {
     // Vérification que les données retournées sont correctes
     expect(getSports).toHaveReturnedWith(Promise.resolve(mockSports))
   })
+
+  it('exporte la constante revalidate à 60', () => {
+
+    // Importation du module de la page
+    const pageModule = require('../../app/page')
+
+    // Vérification que la constante revalidate est bien définie et égale à 60
+    expect(pageModule.revalidate).toBe(60)
+  })
 })

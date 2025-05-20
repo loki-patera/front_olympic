@@ -140,6 +140,7 @@ export const EventCard: React.FC<EventCardProps> = ({
 
     <div
       ref={cardRef}
+      data-testid={`event-card-${event.id_event}`}
       className="relative min-w-[360px] h-[280px] shadow shadow-yellowjo rounded-lg"
       style={{ perspective: 1000 }}
     >

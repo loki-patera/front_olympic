@@ -42,4 +42,19 @@ describe("Composant CustomButton", () => {
       expect.stringContaining(baseStyles)
     )
   })
+
+  it("ajoute les styles de disabled si le bouton est désactivé", () => {
+    // Rendu du composant avec la propriété disabled
+    render(<CustomButton {...defaultProps} disabled />)
+
+    // Récupère le bouton par son texte
+    const button = screen.getByText("Cliquez ici")
+
+    // Vérifie que le bouton a les classes de style pour un état désactivé
+    expect(button.className).toContain('opacity-50')
+    expect(button.className).toContain('cursor-not-allowed')
+
+    // Vérifie que le bouton est désactivé
+    expect(button).toBeDisabled()
+  })
 })

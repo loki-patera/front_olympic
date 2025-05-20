@@ -1,3 +1,5 @@
+export const revalidate = 60
+
 import { getEvents, getOffers, getSeats, getSports } from '../../../lib/api'
 import { EventList } from '../../components/sections/bookingSections/eventSection/EventList'
 import { SportSelect } from '../../components/sections/bookingSections/SportSelect'

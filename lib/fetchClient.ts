@@ -41,8 +41,10 @@ export const fetchClient = async <T> ({
   token
 }: FetchOptions): Promise<T> => {
 
-  // Utilisation de l'URL de base de l'API depuis les variables d'environnement
-  const baseUrl = process.env.API_URL
+  // Si le point de terminaison commence par "/api/"
+  const url = endpoint.startsWith("/api/")
+    ? endpoint                              // Utilisation de l'URL de l'API interne
+    : `${process.env.API_URL}${endpoint}`   // Sinon, utilisation de l'URL construite à partir de la variable d'environnement `API_URL`
 
   // Initialisation des en-têtes de la requête
   const headers: HeadersInit = {
@@ -60,7 +62,7 @@ export const fetchClient = async <T> ({
   }
 
   // Effectue la requête à l'API en utilisant l'URL de base et le point de terminaison spécifié
-  const res = await fetch(`${baseUrl}${endpoint}`, options)
+  const res = await fetch(url, options)
 
   if (!res.ok) {
     // Si la réponse n'est pas correcte, lève une erreur avec le code et le message d'erreur

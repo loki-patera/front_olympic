@@ -1,4 +1,5 @@
-import { CompetitionType } from '../../app/types'
+import { CompetitionType } from '@/app/types'
+import { fetchClient } from '../fetchClient'
 
 /**
  * Fonction pour récupérer les compétitions liées à un événement sportif spécifique.
@@ -13,18 +14,12 @@ import { CompetitionType } from '../../app/types'
  */
 export const getCompetitionsByEvent = async (eventId: number): Promise<CompetitionType[]> => {
 
-  // Récupération des compétitions liées à un événement sportif depuis l'API
-  const res = await fetch(`/api/competitions/${eventId}`, {
+  // Récupération des compétitions liées à un événement sportif depuis l'API interne
+  const competitions = await fetchClient<CompetitionType[]>({
+    endpoint: `/api/competitions/${eventId}`,
     method: 'GET'
   })
 
-  if (!res.ok) {
-    // Si la réponse n'est pas correcte, lève une erreur
-    throw new Error(`Erreur lors de la récupération des compétitions : ${res.statusText}`)
-  }
-
-  // Parse la réponse JSON
-  const response = await res.json()
-
-  return response
+  // Retourne les compétitions
+  return competitions
 }

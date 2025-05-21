@@ -11,6 +11,7 @@ import { ShoppingCartIcon as ShoppingCartIconSolid, UserIcon as UserIconSolid } 
  * @property variant - Variante du menu, soit `cart` pour le panier, soit `user` pour l'utilisateur.
  * @property menuItems - Liste des éléments de menu à afficher. Chaque élément de menu peut avoir une étiquette et un lien `href` optionnel.
  * @property customMenuItems - Élément de menu personnalisable à afficher si défini, utilisé uniquement pour le dernier élément.
+ * @property cartBadge - Nombre d'articles dans le panier, utilisé pour afficher un badge sur l'icône du panier.
  */
 export interface NavMenuProps {
   ariaLabel: string
@@ -19,8 +20,10 @@ export interface NavMenuProps {
   menuItems: {
     label: string
     href?: string
+    custom?: React.ReactNode
   }[]
   customMenuItems?: React.ReactNode
+  cartBadge?: number
 }
 
 /**
@@ -33,8 +36,8 @@ export interface NavMenuProps {
  *    colorIcon="text-blue-500"
  *    variant="cart"
  *    menuItems={[
- *      { label: 'Votre panier est vide' },
- *      { label: 'Voir votre panier' }
+ *      { label: "Votre panier est vide" },
+ *      { label: "Voir votre panier" }
  *    ]}
  *    customMenuItems={<button>Voir votre panier</button>}
  * />
@@ -45,7 +48,8 @@ export const NavMenu: React.FC<NavMenuProps> = ({
   colorIcon,
   variant,
   menuItems,
-  customMenuItems
+  customMenuItems,
+  cartBadge
 }) => {
 
   // Utilisation du hook useState pour gérer l'affichage de l'icône au survol
@@ -67,24 +71,35 @@ export const NavMenu: React.FC<NavMenuProps> = ({
           onMouseLeave={() => setIsHovered(false)}
           aria-label={ariaLabel}
         >
+          {/* Affichage de l'icône */}
           {isHovered ? (
             <SolidIcon className="size-8" />
           ) : (
             <OutlineIcon className="size-8" />
+          )}
+
+          {/* Affichage du badge du panier */}
+          {variant === "cart" && cartBadge !== undefined && cartBadge > 0 && (
+            <span
+              className="absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-red-500 text-white text-xs w-5 h-5 z-10"
+              data-testid="cart-badge"
+            >
+              {cartBadge}
+            </span>
           )}
         </MenuButton>
       </div>
 
       <MenuItems
         transition
-        className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md divide-y divide-gray-100 bg-white
-          py-1 ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95
+        className="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md divide-y divide-white bg-gray-50
+          py-1 shadow-lg transition focus:outline-hidden data-closed:scale-95 border-1 border-yellowjo-light
           data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75
           data-leave:ease-in"
       >
         {menuItems.map((item, index) => (
           <MenuItem key={index}>
-            {/* Si un lien `href` existe, on le rend en priorité */}
+            {/* Si un lien `href` existe, il est rendu en priorité */}
             {item.href ? (
               <a
                 href={item.href}
@@ -92,6 +107,9 @@ export const NavMenu: React.FC<NavMenuProps> = ({
               >
                 {item.label}
               </a>
+            ) : item.custom ? (
+              // Si un élément `custom` est défini, il est rendu
+              item.custom
             ) : (
               // Si `customMenuItems` est défini, il est rendu uniquement pour le dernier élément
               index === menuItems.length - 1 ? (

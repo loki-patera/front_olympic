@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
- * API route pour récupérer les compétitions liées à un événement spécifique.
+ * API route interne pour récupérer les compétitions liées à un événement spécifique.
  * 
  * @param {NextRequest} request - Requête HTTP entrante.
  * @param {Promise<{ eventId: string }>} props.params - Paramètres de l'URL, incluant `eventId`.

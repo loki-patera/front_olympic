@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { CartType } from '../types'
-import { getCartDetails } from '@/lib/api'
+import { getCartDetails } from '../../lib/api'
 
 /**
  * Interface `CartItem` représentant une entrée dans le panier.
@@ -15,10 +15,18 @@ export interface CartItem {
   id_offer: number
 }
 
-interface CartContextType {
+/**
+ * Interface `CartContextType` représentant le type du contexte du panier.
+ * 
+ * @property cart - Tableau d'éléments de type `CartItem` représentant les réservations dans le panier.
+ * @property addToCart - Fonction pour ajouter une réservation au panier.
+ * @property removeFromCart - Fonction pour supprimer une réservation du panier.
+ * @property cartDetails - Détails des réservations dans le panier.
+ */
+export interface CartContextType {
   cart: CartItem[]
-  addToCart: (item: CartItem) => void
-  removeFromCart: (item: CartItem) => void
+  addToCart(item: CartItem): void
+  removeFromCart(item: CartItem): void
   cartDetails: CartType[]
 }
 

@@ -68,6 +68,31 @@ describe('fetchClient', () => {
     expect(result).toEqual(mockResponse)
   })
 
+  it("utilise l'URL interne si endpoint commence par /api/", async () => {
+
+    // Mock de la réponse de la requête GET avec un endpoint interne
+    const mockResponse = { data: 'internal' }
+    ;(fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce(mockResponse)
+    })
+
+    // Appel de la fonction fetchClient avec une requête GET sur un endpoint interne
+    const result = await fetchClient<{ data: string }>({
+      endpoint: '/api/test',
+      method: 'GET'
+    })
+
+    // Vérifie que la fonction `fetch` a été appelée avec les bons arguments
+    expect(fetch).toHaveBeenCalledWith('/api/test', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    // Vérifie que le résultat retourné est celui attendu
+    expect(result).toEqual(mockResponse)
+  })
+
   it("ajoute un en-tête Authorization si un token est fourni", async () => {
 
     // Mock de la réponse de la requête GET avec un token

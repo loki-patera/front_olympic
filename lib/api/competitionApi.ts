@@ -1,4 +1,4 @@
-import { CompetitionType } from '@/app/types'
+import { CompetitionType } from '../../app/types'
 import { fetchClient } from '../fetchClient'
 
 /**

@@ -1,12 +1,16 @@
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { EventCard } from "../../../../../../../app/components/sections/bookingSections/eventSection/card/EventCard"
-import * as api from "../../../../../../../lib/api"
-import { CompetitionType, EventType, LocationType, OfferType, SportType } from "../../../../../../../app/types"
-import { useState } from "react"
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { EventCard } from '../../../../../../../app/components/sections/bookingSections/eventSection/card/EventCard'
+import * as api from '../../../../../../../lib/api'
+import { CompetitionType, EventType, LocationType, OfferType, SportType } from '../../../../../../../app/types'
+import { useState } from 'react'
+import { CartProvider } from '../../../../../../../app/context/CartContext'
 
-// Mock de l'API pour simuler la récupération des compétitions
-jest.mock("../../../../../../../lib/api")
+// Mock de l'API pour simuler la récupération des compétitions et des détails pour le panier
+jest.mock('../../../../../../../lib/api', () => ({
+  getCartDetails: jest.fn().mockResolvedValue([]),
+  getCompetitionsByEvent: jest.fn()
+}))
 
 const mockSport: SportType = {
   id_sport: 1,
@@ -65,19 +69,21 @@ describe("EventCard", () => {
     jest.clearAllMocks()
   })
 
-  it("appelle onToggle lors du clic sur le texte d'ouverture", async () => {
+  it("appelle onToggle lors du clic sur le texte 'Afficher les compétitions ▼'", async () => {
 
-    // Rendu du composant EventCard avec les props
+    // Composant `EventCard` rendu dans le contexte du `CartProvider`
     render(
-      <EventCard
-        event={mockEvent}
-        isOpen={false}
-        onToggle={onToggle}
-        seats={mockSeats}
-        offers={mockOffers}
-      />
+      <CartProvider>
+        <EventCard
+          event={mockEvent}
+          isOpen={false}
+          onToggle={onToggle}
+          seats={mockSeats}
+          offers={mockOffers}
+        />
+      </CartProvider>
     )
-
+    
     // Simule un clic sur le texte pour ouvrir le tiroir
     await act(async () => {
       fireEvent.click(screen.getByText("Afficher les compétitions ▼"))
@@ -106,8 +112,12 @@ describe("EventCard", () => {
       )
     }
 
-    // Rendu du composant avec le wrapper
-    render(<Wrapper />)
+    // Rendu du composant avec le wrapper dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <Wrapper />
+      </CartProvider>
+    )
 
     // Ouvre le tiroir
     fireEvent.click(screen.getByText(/Afficher les compétitions/i))
@@ -138,9 +148,13 @@ describe("EventCard", () => {
       )
     }
   
-    // Rendu du composant avec le wrapper
-    render(<Wrapper />)
-  
+    // Rendu du composant avec le wrapper dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <Wrapper />
+      </CartProvider>
+    )
+
     // Ouvre le tiroir
     fireEvent.click(screen.getByText(/Afficher les compétitions/i))
   
@@ -152,15 +166,17 @@ describe("EventCard", () => {
 
   it("revient en face avant quand on clique sur le bouton Retour", async () => {
 
-    // Rendu du composant EventCard avec les props
+    // Composant `EventCard` rendu dans le contexte du `CartProvider`
     render(
-      <EventCard
-        event={mockEvent}
-        isOpen={false}
-        onToggle={onToggle}
-        seats={mockSeats}
-        offers={mockOffers}
-      />
+      <CartProvider>
+        <EventCard
+          event={mockEvent}
+          isOpen={false}
+          onToggle={onToggle}
+          seats={mockSeats}
+          offers={mockOffers}
+        />
+      </CartProvider>
     )
   
     // Ouvre la face arrière de la carte
@@ -187,15 +203,17 @@ describe("EventCard", () => {
     outside.setAttribute('data-testid', 'outside')
     document.body.appendChild(outside)
   
-    // Rendu du composant EventCard avec les props
+    // Composant `EventCard` rendu dans le contexte du `CartProvider`
     render(
-      <EventCard
-        event={mockEvent}
-        isOpen={false}
-        onToggle={onToggle}
-        seats={mockSeats}
-        offers={mockOffers}
-      />
+      <CartProvider>
+        <EventCard
+          event={mockEvent}
+          isOpen={false}
+          onToggle={onToggle}
+          seats={mockSeats}
+          offers={mockOffers}
+        />
+      </CartProvider>
     )
   
     // Ouvre la face arrière de la carte
@@ -223,15 +241,17 @@ describe("EventCard", () => {
     // Utilisation de userEvent pour simuler les interactions utilisateur
     const user = userEvent.setup()
     
-    // Rendu du composant EventCard avec les props
+    // Composant `EventCard` rendu dans le contexte du `CartProvider`
     render(
-      <EventCard
-        event={mockEvent}
-        isOpen={false}
-        onToggle={onToggle}
-        seats={mockSeats}
-        offers={mockOffers}
-      />
+      <CartProvider>
+        <EventCard
+          event={mockEvent}
+          isOpen={false}
+          onToggle={onToggle}
+          seats={mockSeats}
+          offers={mockOffers}
+        />
+      </CartProvider>
     )
   
     // Ouvre la face arrière de la carte
@@ -284,6 +304,54 @@ describe("EventCard", () => {
       expect(screen.getByText(/Réduction →/)).toHaveTextContent("10 %")
       // Total : 200 - 20 = 180 €
       expect(screen.getByText(/Prix total →/)).toHaveTextContent("180.00 €")
+    })
+  })
+
+  it("réinitialise les sélections après une réservation", async () => {
+
+    // Utilisation de userEvent pour simuler les interactions utilisateur
+    const user = userEvent.setup()
+  
+    // Composant `EventCard` rendu dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <EventCard
+          event={mockEvent}
+          isOpen={false}
+          onToggle={onToggle}
+          seats={mockSeats}
+          offers={mockOffers}
+        />
+      </CartProvider>
+    )
+  
+    // Ouvre la face arrière de la carte
+    fireEvent.click(screen.getByRole("button", { name: "Voir les offres" }))
+  
+    // Sélectionne 4 places
+    const seatSelect = screen.getByRole("button", { name: /Sélectionnez le nombre de places/i })
+    await user.click(seatSelect)
+    const seatOptions = await screen.findAllByRole("option")
+    const option4 = seatOptions.find(opt => opt.textContent?.trim() === "4")
+    expect(option4).toBeDefined()
+    await user.click(option4!)
+  
+    // Sélectionne l'offre "famille"
+    const offreSelect = screen.getByRole("button", { name: /Sélectionnez une offre/i })
+    await user.click(offreSelect)
+    const offreOptions = await screen.findAllByRole("option")
+    const familleOption = offreOptions.find(opt => opt.textContent?.toLowerCase().includes("famille"))
+    expect(familleOption).toBeDefined()
+    await user.click(familleOption!)
+  
+    // Clique sur le bouton "Réserver"
+    const reserveBtn = screen.getByRole("button", { name: "Réserver" })
+    await user.click(reserveBtn)
+  
+    // Vérifie que les sélections sont réinitialisées
+    await waitFor(() => {
+      expect(offreSelect).toBeDisabled()
+      expect(reserveBtn).toBeDisabled()
     })
   })
 })

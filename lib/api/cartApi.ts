@@ -1,5 +1,5 @@
-import { CartItem } from '@/app/context/CartContext'
-import { CartType } from '@/app/types'
+import { CartItem } from '../../app/context/CartContext'
+import { CartType } from '../../app/types'
 import { fetchClient } from '../fetchClient'
 
 /**

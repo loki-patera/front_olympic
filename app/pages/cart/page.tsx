@@ -1,11 +1,10 @@
 'use client'
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { CustomButton } from "@/app/components/shared/CustomButton"
-import { useCart } from "@/app/context/CartContext"
-import { formatDate, formatTime } from "@/app/utils/dateUtils"
-import { useSportStore } from "@/app/stores"
+import { CustomButton } from "../../components/shared/CustomButton"
+import { useCart } from "../../context/CartContext"
+import { formatDate, formatTime } from "../../utils/dateUtils"
+import { useSportStore } from "../../stores"
 
 /**
  * Composant `Cart` pour afficher la page du panier de réservations de l'application.
@@ -28,14 +27,6 @@ export default function Cart(): React.JSX.Element {
       acc + event.price * offer.number_seats * (1 - offer.discount / 100),
     0
   )
-
-  // Utilisation du hook useRouter pour la navigation
-  const router = useRouter()
-
-  // Fonction de gestion de la navigation vers la page du panier
-  const handleNavigation = (): void => {
-    router.push("/")
-  }
 
   // Récupération de la fonction setSport du store pour gérer le retour à la page de réservation
   const { setSport } = useSportStore()
@@ -146,8 +137,6 @@ export default function Cart(): React.JSX.Element {
               className="w-56 text-base text-white py-2 bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
               disabled
               label="Valider votre panier"
-              // Gestion de l'événement de clic pour naviguer vers la page du panier
-              onClick={handleNavigation}
             />
           </div>
 

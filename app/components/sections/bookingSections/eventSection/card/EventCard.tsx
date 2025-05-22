@@ -4,7 +4,7 @@ import { CustomButton } from '../../../../shared/CustomButton'
 import { CompetitionType, EventType, OfferType } from '../../../../../types'
 import { getCompetitionsByEvent } from '../../../../../../lib/api'
 import { BookingAmount, OfferSelect, SeatSelect } from './offer'
-import { useCart } from '@/app/context/CartContext'
+import { useCart } from '../../../../../context/CartContext'
 
 /**
  * Interface `EventCardProps` définissant les propriétés du composant {@link EventCard}.
@@ -154,13 +154,10 @@ export const EventCard: React.FC<EventCardProps> = ({
   // Gestion de l'événement de réservation
   const handleReserve = () => {
 
-    // Si aucune offre n'est sélectionnée, ne rien faire
-    if (!selectedOffer) return
-
     // Ajout des IDs de l'événement et de l'offre pour mettre la réservation dans le panier
     addToCart({
       id_event: event.id_event,
-      id_offer: selectedOffer.id_offer
+      id_offer: selectedOffer!.id_offer
     })
 
     // Réinitialisation de l'état de sélection des places et de la réduction

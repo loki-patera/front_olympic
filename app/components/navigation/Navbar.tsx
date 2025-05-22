@@ -1,12 +1,12 @@
 'use client'
 
-import { useCart } from '@/app/context/CartContext'
+import { useCart } from '../../context/CartContext'
 import { useRouter } from 'next/navigation'
 import { CustomButton } from '../shared/CustomButton'
 import { Logo } from '../shared/Logo'
 import { NavMenu } from './NavMenu'
-import { formatDate, formatTime } from '@/app/utils/dateUtils'
-import { CartType } from '@/app/types'
+import { formatDate, formatTime } from '../../utils/dateUtils'
+import { CartType } from '../../types'
 
 /**
  * Composant `Navbar` pour représenter la barre de navigation contenant un logo, un menu du panier et un menu utilisateur.

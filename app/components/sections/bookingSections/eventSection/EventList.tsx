@@ -73,16 +73,24 @@ export const EventList: React.FC<EventListProps> = ({
 
     <section className="pt-8">
       <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {filteredEvents.map((event) => (
-          <EventCard
-            key={event.id_event}
-            event={event}
-            isOpen={openDrawerId === event.id_event}
-            onToggle={() => handleToggleDrawer(event.id_event)}
-            seats={seats}
-            offers={offers}
-          />
-        ))}
+
+        {filteredEvents.length === 0 ? (
+          <div className="col-span-full text-center text-gray-700 text-lg font-bold py-12">
+            Bientôt, de nouveaux événements seront disponibles pour cette épreuve sportive.
+          </div>
+        ) : (
+          filteredEvents.map((event) => (
+            <EventCard
+              key={event.id_event}
+              event={event}
+              isOpen={openDrawerId === event.id_event}
+              onToggle={() => handleToggleDrawer(event.id_event)}
+              seats={seats}
+              offers={offers}
+            />
+          ))
+        )}
+        
       </div>
     </section>
   )

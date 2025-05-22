@@ -18,6 +18,7 @@ export interface CartItem {
 interface CartContextType {
   cart: CartItem[]
   addToCart: (item: CartItem) => void
+  removeFromCart: (item: CartItem) => void
   cartDetails: CartType[]
 }
 
@@ -68,6 +69,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setCart(prev => [...prev, item])
   }
 
+  // Fonction pour supprimer une réservation du panier
+  function removeFromCart(item: CartItem) {
+    setCart(prev =>
+      prev.filter(
+        (cartItem) =>
+          !(cartItem.id_event === item.id_event && cartItem.id_offer === item.id_offer)
+      )
+    )
+  }
+
   useEffect(() => {
     // Si aucune réservation, vide le tableau des détails du panier
     if (cart.length === 0) {
@@ -82,7 +93,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     // Fournit le contexte du panier avec les détails et la fonction d'ajout aux composants enfants
-    <CartContext.Provider value={{ cart, addToCart, cartDetails }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, cartDetails }}>
       {children}
     </CartContext.Provider>
   )

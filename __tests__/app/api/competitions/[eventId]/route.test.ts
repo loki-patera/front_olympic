@@ -1,7 +1,7 @@
 import { GET } from "../../../../../app/api/competitions/[eventId]/route"
 import { NextRequest, NextResponse } from "next/server"
 
-describe("Gestionnaire GET pour les compétitions", () => {
+describe("API GET /api/competitions/[eventId]", () => {
 
   // Sauvegarde des variables d'environnement avant les tests
   const mockEnv = process.env

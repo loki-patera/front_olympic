@@ -4,6 +4,7 @@ import { CustomButton } from '../../../../shared/CustomButton'
 import { CompetitionType, EventType, OfferType } from '../../../../../types'
 import { getCompetitionsByEvent } from '../../../../../../lib/api'
 import { BookingAmount, OfferSelect, SeatSelect } from './offer'
+import { useCart } from '../../../../../context/CartContext'
 
 /**
  * Interface `EventCardProps` définissant les propriétés du composant {@link EventCard}.
@@ -34,7 +35,7 @@ export interface EventCardProps {
  *    seats={seats}
  *    offers={offers}
  * />
- * ``` 
+ * ```
  */
 export const EventCard: React.FC<EventCardProps> = ({
   event,
@@ -118,7 +119,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   // État local pour gérer la récupération de la réduction de l'offre sélectionnée
   const [discountRecovered, setDiscountRecovered] = useState<number>()
 
-    // Vérification si les valeurs sont définies pour effectuer le calcul
+  // Vérification si les valeurs sont définies pour effectuer le calcul
   const canCompute = seatSelected !== undefined && discountRecovered !== undefined && event.price !== undefined
 
   // Calcul du sous-total
@@ -135,6 +136,38 @@ export const EventCard: React.FC<EventCardProps> = ({
   const total = canCompute
     ? subTotal - (subTotal * discount / 100)
     : 0
+  
+  // Récupération de la fonction d'ajout au panier depuis le contexte
+  const { addToCart } = useCart()
+
+  // Récupération de l'offre sélectionnée
+  const selectedOffer = offers.find(offer => offer.number_seats === seatSelected && offer.discount === discountRecovered)
+
+  // État local pour gérer la réinitialisation des sélections
+  const [resetSelects, setResetSelects] = useState(false)
+
+  // Ajout d'un effet pour remettre `resetSelects` à `false` après la réinitialisation
+  useEffect(() => {
+    if (resetSelects) setResetSelects(false)
+  }, [resetSelects])
+
+  // Gestion de l'événement de réservation
+  const handleReserve = () => {
+
+    // Ajout des IDs de l'événement et de l'offre pour mettre la réservation dans le panier
+    addToCart({
+      id_event: event.id_event,
+      id_offer: selectedOffer!.id_offer
+    })
+
+    // Réinitialisation de l'état de sélection des places et de la réduction
+    setSeatSelected(undefined)
+    setDiscountRecovered(undefined)
+    setResetSelects(true)
+    
+    // Retour à la face avant de la carte
+    setFlipped(false)
+  }
 
   return (
 
@@ -179,13 +212,17 @@ export const EventCard: React.FC<EventCardProps> = ({
 
             <div className="absolute bottom-0 inset-x-0 px-4 pb-3">
               <div className="flex justify-between items-center">
+
+                {/* Lien `Afficher les compétitions`/`Afficher l'événement` pour ouvrir/fermer le tiroir des compétitions */}
                 <p 
-                  className="font-semibold text-sm text-gray-700 cursor-pointer"
+                  className="font-semibold text-sm text-gray-700 cursor-pointer hover:text-orange-600 hover:underline-offset-4 hover:underline"
                   // Gestion de l'événement de clic pour ouvrir/fermer le tiroir des compétitions
                   onClick={handleToggleDrawer}
                 >
                   Afficher {isOpen ? "l'événement ▲" : "les compétitions ▼"}
                 </p>
+
+                {/* Bouton `Voir les offres` pour afficher la face arrière de la carte */}
                 <CustomButton
                   className="text-sm py-1 bg-bluejo text-white active:bg-bluejo-dark shadow-bluejo-light"
                   label="Voir les offres"
@@ -198,8 +235,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             {/* Affichage des compétitions */}
             {isOpen && (
               <div
-                className="absolute top-4 left-0 w-full h-2/3 bg-gray-50 shadow-lg py-2 px-3 rounded-lg transition-transform duration-300
-                  translate-y-0"
+                className="absolute top-4 left-0 w-full h-2/3 bg-gray-50 shadow-lg py-2 px-3 rounded-lg transition-transform duration-300 translate-y-0"
               >
                 <div className="overflow-y-auto h-full">
                   {loading ? (
@@ -243,14 +279,15 @@ export const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
 
-        {/* Face arrière de la carte pour sélectionner un nombre de places, sélectionner une offre et afficher le prix de la réservation */}
+        {/* Face arrière de carte pour sélectionner un nombre de places, sélectionner une offre et afficher le prix de la réservation */}
         <div className="absolute inset-0 w-full h-full bg-white backface-hidden rounded-lg rotate-x-180">
-
+          
           <div className="flex flex-col items-center justify-center p-4">
 
             <SeatSelect
               seats={seats}
               setSeatSelected={setSeatSelected}
+              reset={resetSelects}
             />
 
             <OfferSelect
@@ -268,16 +305,22 @@ export const EventCard: React.FC<EventCardProps> = ({
 
           <div className="absolute bottom-0 inset-x-0 px-4 pb-3">
             <div className="flex justify-between items-center">
+
+              {/* Bouton `Retour` pour retourner à la face avant de la carte */}
               <CustomButton
-                className="text-sm py-1 bg-red-500 text-white active:bg-red-600 shadow-red-200"
+                className="text-sm py-1 bg-red-500 text-white active:bg-red-700 shadow-red-200"
                 label="Retour"
                 // Gestion de l'événement de clic pour retourner à la face avant de la carte
                 onClick={() => setFlipped(false)}
               />
+
+              {/* Bouton `Réserver` pour ajouter l'offre au panier */}
               <CustomButton
                 className="text-sm py-1 bg-green-500 text-white active:bg-green-600 shadow-green-200"
                 label="Réserver"
-                disabled={total === 0}
+                disabled={total === 0 || !selectedOffer}
+                // Gestion de l'événement de clic pour ajouter l'offre au panier
+                onClick={handleReserve}
               />
             </div>
           </div>

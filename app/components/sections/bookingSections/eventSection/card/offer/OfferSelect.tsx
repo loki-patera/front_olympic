@@ -1,4 +1,4 @@
-import { OfferType } from "@/app/types"
+import { OfferType } from "../../../../../../types"
 import { CustomSelect } from "../../../../../shared/CustomSelect"
 import { useEffect, useState } from "react"
 

@@ -1,8 +1,8 @@
-import { OfferType } from "@/app/types"
-import { CustomSelect } from "../../../../../shared/CustomSelect"
-import { useEffect, useState } from "react"
+import { OfferType } from '../../../../../../types'
+import { CustomSelect } from '../../../../../../components/shared/CustomSelect'
+import { useEffect, useState } from 'react'
 
-/**
+/*'
  * Interface `SeatSelectProps` définissant les propriétés du composant {@link SeatSelect}.
  * 
  * @property seats - Tableau des objets de type {@link OfferType} représentant les différents nombres de places.
@@ -11,6 +11,7 @@ import { useEffect, useState } from "react"
 export interface SeatSelectProps {
   seats: OfferType[]
   setSeatSelected(seatSelected: number | undefined): void
+  reset?: boolean
 }
 
 /**
@@ -26,7 +27,8 @@ export interface SeatSelectProps {
  */
 export const SeatSelect: React.FC<SeatSelectProps> = ({
   seats,
-  setSeatSelected
+  setSeatSelected,
+  reset
 }) => {
 
   // État local pour stocker le nombre de places sélectionnées
@@ -36,6 +38,11 @@ export const SeatSelect: React.FC<SeatSelectProps> = ({
   useEffect(() => {
     setSeatSelected(selected?.number_seats)
   }, [selected])
+
+  // Réinitialisation de la sélection lorsque la prop `reset` est vrai
+  useEffect(() => {
+    if (reset) setSelected(null)
+  }, [reset])
  
   return (
 

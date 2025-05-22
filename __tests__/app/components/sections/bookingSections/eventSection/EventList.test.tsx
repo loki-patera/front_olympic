@@ -1,6 +1,7 @@
-import { render, screen, fireEvent, act } from "@testing-library/react"
-import { EventList } from "../../../../../../app/components/sections/bookingSections/eventSection/EventList"
-import { EventType, OfferType, SportType } from "../../../../../../app/types"
+import { render, screen, fireEvent, act } from '@testing-library/react'
+import { EventList } from '../../../../../../app/components/sections/bookingSections/eventSection/EventList'
+import { EventType, OfferType, SportType } from '../../../../../../app/types'
+import { CartProvider } from '../../../../../../app/context/CartContext'
 
 // Mock des données
 const sports: SportType[] = [
@@ -63,8 +64,12 @@ describe("EventList", () => {
     // Sélection de l'épreuve sportive "Natation"
     sportValue = sports[0]
 
-    // Rendu du composant EventList
-    render(<EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />)
+    // Composant `EventList` rendu dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />
+      </CartProvider>
+    )
 
     // Vérification que seul l'événement sportif "Natation" est affiché
     expect(screen.getByText("Natation")).toBeInTheDocument()
@@ -78,8 +83,12 @@ describe("EventList", () => {
     // Sélection de toutes les épreuves sportives
     sportValue = null
 
-    // Rendu du composant EventList
-    render(<EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />)
+    // Composant `EventList` rendu dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />
+      </CartProvider>
+    )
 
     // Vérification que tous les événements sont affichés
     expect(screen.getByText("Natation")).toBeInTheDocument()
@@ -91,8 +100,12 @@ describe("EventList", () => {
     // Sélection de l'épreuve sportive "Basketball"
     sportValue = sports[1]
 
-    // Rendu du composant EventList
-    render(<EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />)
+    // Composant `EventList` rendu dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />
+      </CartProvider>
+    )
 
     // Clique sur le bouton d'ouverture du premier EventCard
     const btn = screen.getAllByText(/Afficher les compétitions/i)[0]
@@ -118,8 +131,12 @@ describe("EventList", () => {
     // Sélection de toutes les épreuves sportives
     sportValue = null
 
-    // Rendu du composant EventList
-    render(<EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />)
+    // Composant `EventList` rendu dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />
+      </CartProvider>
+    )
 
     // Clique sur le bouton d'ouverture du premier EventCard
     const btn = screen.getAllByText(/Afficher les compétitions/i)[0]
@@ -140,5 +157,23 @@ describe("EventList", () => {
 
     // Nettoyage
     jest.useRealTimers()
+  })
+
+  it("affiche un message si aucun événement n'est disponible pour le sport sélectionné", () => {
+
+    // Simule un sport sélectionné qui n'a aucun événement associé
+    sportValue = { id_sport: 999, title: "Inconnu", image: "inconnu.jpg" }
+  
+    // Composant `EventList` rendu dans le contexte du `CartProvider`
+    render(
+      <CartProvider>
+        <EventList events={mockEvents} seats={mockSeats} offers={mockOffers} />
+      </CartProvider>
+    )
+  
+    // Vérification que le message approprié est affiché
+    expect(
+      screen.getByText("Bientôt, de nouveaux événements seront disponibles pour cette épreuve sportive.")
+    ).toBeInTheDocument()
   })
 })

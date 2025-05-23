@@ -108,7 +108,7 @@ export const Navbar = ():React.JSX.Element => {
               colorIcon="text-bluejo"
               variant="user"
               menuItems={[
-                { label: "Se connecter", href: "/" }
+                { label: "Se connecter", href: "/pages/login" }
               ]}
             />
 

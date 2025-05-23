@@ -5,6 +5,8 @@ import { CustomButton } from "../../components/shared/CustomButton"
 import { useCart } from "../../context/CartContext"
 import { formatDate, formatTime } from "../../utils/dateUtils"
 import { useSportStore } from "../../stores"
+import CustomSlideOver from "../../components/shared/CustomSlideOver"
+import { useState } from "react"
 
 /**
  * Composant `Cart` pour afficher la page du panier de réservations de l'application.
@@ -31,9 +33,16 @@ export default function Cart(): React.JSX.Element {
   // Récupération de la fonction setSport du store pour gérer le retour à la page de réservation
   const { setSport } = useSportStore()
 
+  // État pour ouvrir/fermer le SlideOver
+  const [isSlideOverOpen, setIsSlideOverOpen] = useState(false)
+
   return (
 
     <main>
+
+      {/* SlideOver affiché si isSlideOverOpen est true */}
+      {isSlideOverOpen && <CustomSlideOver />}
+
       <div className="max-w-2xl mx-auto py-16 px-6 lg:px-0">
         <h1 className="text-3xl text-center sm:text-4xl font-extrabold text-gray-400">
           Panier de réservations
@@ -135,8 +144,10 @@ export default function Cart(): React.JSX.Element {
           <div className="flex justify-center mt-10">
             <CustomButton
               className="w-56 text-base text-white py-2 bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
-              disabled
+              // disabled
               label="Valider votre panier"
+              // Ouvre le SlideOver au clic
+              onClick={() => setIsSlideOverOpen(true)}
             />
           </div>
 

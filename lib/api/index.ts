@@ -1,4 +1,5 @@
 export * from './cartApi'
+export * from './checkEmailApi'
 export * from './competitionApi'
 export * from './eventApi'
 export * from './offerApi'

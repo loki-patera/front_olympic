@@ -16,7 +16,7 @@ import { CartType } from '../../types'
  * <Navbar />
  * ```
  */
-export const Navbar = ():React.JSX.Element => {
+export const Navbar = (): React.JSX.Element => {
 
   // Récupération du contexte pour le panier
   const { cart, cartDetails } = useCart()

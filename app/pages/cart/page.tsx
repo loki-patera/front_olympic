@@ -120,13 +120,13 @@ export default function Cart(): React.JSX.Element {
           {cartDetails.length === 0 ? (
             <div className="mt-6 space-y-2 flex flex-col items-center">
               <div
-                className="px-4 py-1 rounded bg-yellow-100 border border-yellow-400 text-yellow-800 text-sm flex items-center justify-center"
+                className="px-4 py-1 rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs flex items-center justify-center"
                 role="alert"
               >
                 Ajoutez au moins une réservation !
               </div>
               <div
-                className="px-4 py-1 rounded bg-yellow-100 border border-yellow-400 text-yellow-800 text-sm flex items-center justify-center"
+                className="px-4 py-1 rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs flex items-center justify-center"
                 role="alert"
               >
                 Connectez-vous pour valider votre panier !
@@ -134,17 +134,17 @@ export default function Cart(): React.JSX.Element {
             </div>
           ) : (
             <div
-              className="mt-6 px-4 py-1 w-fit mx-auto rounded bg-yellow-100 border border-yellow-400 text-yellow-800 text-sm flex items-center justify-center"
+              className="mt-6 px-4 py-1 w-fit mx-auto rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs"
               role="alert"
             >
               Connectez-vous pour valider votre panier !
             </div>
           )}
 
-          <div className="flex justify-center mt-10">
+          <div className="flex justify-center mt-8">
             <CustomButton
               className="w-56 text-base text-white py-2 bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
-              // disabled
+              disabled
               label="Valider votre panier"
               // Ouvre le SlideOver au clic
               onClick={() => setIsSlideOverOpen(true)}
@@ -155,6 +155,7 @@ export default function Cart(): React.JSX.Element {
             <Link
               href="/pages/booking"
               className="font-semibold text-sm text-gray-500 cursor-pointer hover:text-bluejo hover:underline-offset-4 hover:underline"
+              // Réinitialise le sport sélectionné et redirige vers la page de réservation
               onClick={() => setSport(null)}
             >
               Ajouter une réservation

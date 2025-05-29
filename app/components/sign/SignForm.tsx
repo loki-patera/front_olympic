@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { CustomButton } from '../shared/CustomButton'
 import { checkEmailExists } from '../../../lib/api'
 import countries from 'world-countries'
-import { validateEmail, validateFirstName, validateLastName, validateBirthDate } from './validation'
-import { BirthDateField, CountrySelect, EmailField, FirstNameField, LastNameField } from './fields'
+import { validateEmail, validateFirstName, validateLastName, validateBirthDate, validatePassword, validateConfirmPassword } from './validation'
+import { BirthDateField, ConfirmPasswordField, CountrySelect, EmailField, FirstNameField, LastNameField, PasswordField } from './fields'
+import { UserType } from '../../types'
 
 /**
  * Composant `SignForm` pour gérer la connexion ou la création de compte.
@@ -20,7 +21,7 @@ export const SignForm = (): React.JSX.Element => {
   // --------------------------------------------------------------------- États ---------------------------------------------------------------------
 
   // État local pour l'email
-  const [email, setEmail] = useState<string>("")
+  const [email, setEmail] = useState<UserType["email"]>("")
 
   // État local pour la validité de l'email
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false)
@@ -40,7 +41,7 @@ export const SignForm = (): React.JSX.Element => {
 
 
   // État local pour le prénom lors de la création de compte
-  const [firstName, setFirstName] = useState<string>("")
+  const [firstName, setFirstName] = useState<UserType["firstname"]>("")
 
   // État local pour la validité du prénom
   const [isFirstNameValid, setIsFirstNameValid] = useState<boolean>(false)
@@ -50,7 +51,7 @@ export const SignForm = (): React.JSX.Element => {
 
 
   // État local pour le nom lors de la création de compte
-  const [lastName, setLastName] = useState<string>("")
+  const [lastName, setLastName] = useState<UserType["lastname"]>("")
 
   // État local pour la validité du nom
   const [isLastNameValid, setIsLastNameValid] = useState<boolean>(false)
@@ -60,7 +61,7 @@ export const SignForm = (): React.JSX.Element => {
 
 
   // État local pour la date de naissance
-  const [birthDate, setBirthDate] = useState<string>("")
+  const [birthDate, setBirthDate] = useState<UserType["date_of_birth"]>("")
 
   // État local pour la validité de la date de naissance
   const [isBirthDateValid, setIsBirthDateValid] = useState<boolean>(false)
@@ -70,10 +71,36 @@ export const SignForm = (): React.JSX.Element => {
 
 
   // État local pour le pays
-  const [country, setCountry] = useState<string>("")
+  const [country, setCountry] = useState<UserType["country"]>("")
 
   // État local pour savoir si le champ pays a été touché
   const [countryTouched, setCountryTouched] = useState<boolean>(false)
+
+
+  // État local pour gérer l'étape du mot de passe
+  const [isPasswordStep, setIsPasswordStep] = useState<boolean>(false)
+
+
+  // État local pour le mot de passe
+  const [password, setPassword] = useState<UserType["password"]>("")
+
+  // État local pour la validité du mot de passe
+  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false)
+
+  // État local pour savoir si le champ mot de passe a été touché
+  const [passwordTouched, setPasswordTouched] = useState<boolean>(false)
+
+
+  // État local pour le mot de passe de confirmation
+  const [confirmPassword, setConfirmPassword] = useState<UserType["password"]>("")
+
+  // État local pour la validité du mot de passe de confirmation
+  const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState<boolean>(false)
+
+  // État local pour savoir si le champ de confirmation du mot de passe a été touché
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState<boolean>(false)
+
+
 
 
   // ----------------------------------------------------------------- Liste des pays ----------------------------------------------------------------
@@ -154,6 +181,35 @@ export const SignForm = (): React.JSX.Element => {
     setCountry(value)
   }
 
+  // Fonction pour gérer les changements dans le champ mot de passe
+  const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+
+    // Récupère la valeur de l'input
+    const { value } = e.target
+
+    // Met à jour l'état du mot de passe
+    setPassword(value)
+
+    // Vérifie si le mot de passe est valide et met à jour l'état de validité
+    setIsPasswordValid(validatePassword(value))
+
+    // Met à jour la validité du mot de passe de confirmation en fonction du nouveau mot de passe
+    setIsConfirmPasswordValid(validateConfirmPassword(confirmPassword, value))
+  }
+
+  // Fonction pour gérer les changements dans le champ de confirmation du mot de passe
+  const handleConfirmPasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+
+    // Récupère la valeur de l'input
+    const { value } = e.target
+
+    // Met à jour l'état du mot de passe de confirmation
+    setConfirmPassword(value)
+
+    // Vérifie si le mot de passe de confirmation est valide et met à jour l'état de validité
+    setIsConfirmPasswordValid(validateConfirmPassword(value, password))
+  }
+
 
   // ---------------------------------------------------------- Gestion de la perte de focus ---------------------------------------------------------
 
@@ -192,6 +248,20 @@ export const SignForm = (): React.JSX.Element => {
     setCountryTouched(true)
   }
 
+  // Fonction pour gérer la perte de focus du champ mot de passe
+  const handlePasswordBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+
+    // Marque le champ mot de passe comme touché
+    setPasswordTouched(true)
+  }
+
+  // Fonction pour gérer la perte de focus du champ de confirmation du mot de passe
+  const handleConfirmPasswordBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+
+    // Marque le champ de confirmation du mot de passe comme touché
+    setConfirmPasswordTouched(true)
+  }
+
 
   // ------------------------------------------------------------ Soumission du formulaire -----------------------------------------------------------
 
@@ -201,8 +271,17 @@ export const SignForm = (): React.JSX.Element => {
     // Empêche le comportement par défaut du formulaire et le rechargement de la page
     e.preventDefault()
 
-    // Si en mode création de compte
-    if (isCreatingAccount) {
+    // Si en mode création de compte et pas à l'étape du mot de passe
+    if (isCreatingAccount && !isPasswordStep) {
+
+      // Passe à l'étape du mot de passe
+      setIsPasswordStep(true)
+
+      return
+    }
+
+    // Si à l'étape du mot de passe
+    if (isPasswordStep) {
 
       return
     }
@@ -265,7 +344,11 @@ export const SignForm = (): React.JSX.Element => {
       <div className="w-full max-w-md px-8">
           
         <h2 className="text-center text-2xl/9 font-bold text-gray-900">
-          {isCreatingAccount ? "Complétez les informations suivantes" : "Entrez votre email"}
+          {isPasswordStep
+            ? "Créez votre mot de passe"
+            : isCreatingAccount
+              ? "Complétez les informations suivantes"
+              : "Entrez votre email"}
         </h2>
 
         <div className="mt-10">
@@ -274,46 +357,67 @@ export const SignForm = (): React.JSX.Element => {
             // Gestion de la soumission du formulaire
             onSubmit={handleSubmit}
           >
-            <EmailField
-              value={email}
-              onChange={handleEmailChange}
-              onBlur={handleEmailBlur}
-              isValid={isEmailValid}
-              touched={emailTouched}
-            />
-
-            {isCreatingAccount && (
+            {!isPasswordStep ? (
               <>
-                <FirstNameField
-                  value={firstName}
-                  onChange={handleFirstNameChange}
-                  onBlur={handleFirstNameBlur}
-                  isValid={isFirstNameValid}
-                  touched={firstNameTouched}
+                <EmailField
+                  value={email}
+                  onChange={handleEmailChange}
+                  onBlur={handleEmailBlur}
+                  isValid={isEmailValid}
+                  touched={emailTouched}
                 />
 
-                <LastNameField
-                  value={lastName}
-                  onChange={handleLastNameChange}
-                  onBlur={handleLastNameBlur}
-                  isValid={isLastNameValid}
-                  touched={lastNameTouched}
-                />
+                {isCreatingAccount && (
+                  <>
+                    <FirstNameField
+                      value={firstName}
+                      onChange={handleFirstNameChange}
+                      onBlur={handleFirstNameBlur}
+                      isValid={isFirstNameValid}
+                      touched={firstNameTouched}
+                    />
 
-                <BirthDateField
-                  value={birthDate}
-                  onChange={handleBirthDateChange}
-                  onBlur={handleBirthDateBlur}
-                  isValid={isBirthDateValid}
-                  touched={birthDateTouched}
-                />
+                    <LastNameField
+                      value={lastName}
+                      onChange={handleLastNameChange}
+                      onBlur={handleLastNameBlur}
+                      isValid={isLastNameValid}
+                      touched={lastNameTouched}
+                    />
 
-                <CountrySelect
-                  value={country}
-                  onChange={handleCountryChange}
-                  onBlur={handleCountryBlur}
-                  touched={countryTouched}
-                  countryList={countryList}
+                    <BirthDateField
+                      value={birthDate}
+                      onChange={handleBirthDateChange}
+                      onBlur={handleBirthDateBlur}
+                      isValid={isBirthDateValid}
+                      touched={birthDateTouched}
+                    />
+
+                    <CountrySelect
+                      value={country}
+                      onChange={handleCountryChange}
+                      onBlur={handleCountryBlur}
+                      touched={countryTouched}
+                      countryList={countryList}
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <PasswordField
+                  value={password}
+                  onChange={handlePasswordChange}
+                  onBlur={handlePasswordBlur}
+                  isValid={isPasswordValid}
+                  touched={passwordTouched}
+                />
+                <ConfirmPasswordField
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  onBlur={handleConfirmPasswordBlur}
+                  isValid={isConfirmPasswordValid}
+                  touched={confirmPasswordTouched}
                 />
               </>
             )}
@@ -339,19 +443,33 @@ export const SignForm = (): React.JSX.Element => {
             )}
 
             <div className="flex justify-center mt-5">
-              {emailExists === false && !isCreatingAccount ? (
-                <CustomButton
-                  className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
-                  disabled={isButtonDisabled}
-                  label={loading ? "Vérification..." : "Créer un nouveau compte"}
-                  type="button"
-                  onClick={handleCreateAccount}
-                />
+              {!isPasswordStep ? (
+                emailExists === false && !isCreatingAccount ? (
+                  <CustomButton
+                    className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
+                    disabled={isButtonDisabled}
+                    label={loading ? "Vérification..." : "Créer un nouveau compte"}
+                    type="button"
+                    // Gestion du clic pour la création de compte
+                    onClick={handleCreateAccount}
+                  />
+                ) : (
+                  <CustomButton
+                    className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
+                    disabled={isButtonDisabled}
+                    label={loading ? "Vérification..." : "Continuer"}
+                    type="submit"
+                  />
+                )
               ) : (
                 <CustomButton
                   className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
-                  disabled={isButtonDisabled}
-                  label={loading ? "Vérification..." : "Continuer"}
+                  disabled={
+                    loading ||
+                    !isPasswordValid ||
+                    !isConfirmPasswordValid
+                  }
+                  label={loading ? "Vérification..." : "Confirmer l'inscription"}
                   type="submit"
                 />
               )}

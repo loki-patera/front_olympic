@@ -1,4 +1,4 @@
-import { SignForm } from '../../components/login/SignForm'
+import { SignForm } from '../../components/sign/SignForm'
 
 /**
  * Composant `Login` pour afficher la page de connexion de l'application.

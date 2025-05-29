@@ -1,5 +1,7 @@
 export * from './BirthDateField'
+export * from './ConfirmPasswordField'
 export * from './CountrySelect'
 export * from './EmailField'
 export * from './FirstNameField'
 export * from './LastNameField'
+export * from './PasswordField'

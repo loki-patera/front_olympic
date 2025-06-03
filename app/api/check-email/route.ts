@@ -1,3 +1,4 @@
+import { UserType } from '../../types'
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
@@ -13,8 +14,8 @@ export const POST = async (
 
   try {
 
-    // Récupération de l'email posté dans la requête
-    const { email } = await request.json()
+    // Récupération de l'email pour la vérification
+    const { email }: Pick<UserType, 'email'> = await request.json()
 
     // Construction de l'URL de l'API à partir de la variable d'environnement `API_URL`
     const backendUrl = `${process.env.API_URL}/user/check-email`

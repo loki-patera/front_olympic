@@ -17,35 +17,35 @@ export const validateEmail = (value: UserType["email"]): boolean => {
 }
 
 /**
- * Fonction `validateFirstName` pour valider un prénom
+ * Fonction `validateFirstname` pour valider un prénom
  * 
  * @param {UserType["firstname"]} value - Le prénom à valider
  * 
  * @return {boolean} - Retourne `true` si le prénom est valide, sinon `false`
  */
-export const validateFirstName = (value: UserType["firstname"]): boolean => {
+export const validateFirstname = (value: UserType["firstname"]): boolean => {
 
   // Regex pour valider le prénom
-  const firstNameRegex = /^(?=.{2,50}$)[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+(?:-[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+)*$/u
+  const firstnameRegex = /^(?=.{2,50}$)[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+(?:-[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+)*$/u
 
   // Retourne vrai si le prénom est valide
-  return firstNameRegex.test(value)
+  return firstnameRegex.test(value)
 }
 
 /**
- * Fonction `validateLastName` pour valider un nom de famille
+ * Fonction `validateLastname` pour valider un nom de famille
  * 
  * @param {UserType["lastname"]} value - Le nom de famille à valider
  * 
  * @return {boolean} - Retourne `true` si le nom de famille est valide, sinon `false`
  */
-export const validateLastName = (value: UserType["lastname"]): boolean => {
+export const validateLastname = (value: UserType["lastname"]): boolean => {
 
   // Regex pour valider le nom
-  const lastNameRegex = /^(?=.{2,50}$)[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+(?:-[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+)*$/u
+  const lastnameRegex = /^(?=.{2,50}$)[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+(?:-[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+)*$/u
 
   // Retourne vrai si le nom est valide
-  return lastNameRegex.test(value)
+  return lastnameRegex.test(value)
 }
 
 /**
@@ -80,6 +80,20 @@ export const validateBirthDate = (value: UserType["date_of_birth"]): boolean => 
 }
 
 /**
+ * Fonction `validateCountry` pour valider un pays
+ * 
+ * @param {UserType["country"]} value - Le pays à valider
+ * @param {string[]} countryList - La liste des pays autorisés
+ * 
+ * @return {boolean} - Retourne `true` si le pays est valide, sinon `false`
+ */
+export const validateCountry = (value: UserType["country"], countryList: string[]): boolean => {
+
+  // Vérifie si le pays est dans la liste des pays autorisés
+  return countryList.includes(value)
+}
+
+/**
  * Fonction `validatePassword` pour valider un mot de passe
  * 
  * @param {UserType["password"]} value - Le mot de passe à valider
@@ -95,7 +109,7 @@ export const validatePassword = (value: UserType["password"]): boolean => {
   if (forbiddenChars.test(value)) return false
 
   // Regex pour valider le mot de passe
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[^\s]{16,}$/
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[^\s]{16,128}$/
 
   // Retourne vrai si le mot de passe est valide
   return passwordRegex.test(value)

@@ -48,7 +48,7 @@ export const PasswordField: React.FC<FieldProps> = ({
               1 minuscule<br />
               1 chiffre<br />
               1 caractère spécial<br />
-              Caractères interdits {'<'} {'>'} {'"'} {"'"} {'`'} {';'} {'\/'} {'\\'} {'|'} {'&'} {'('} {')'} {'['} {']'} {'{'} {'}'}
+              Certains caractères sont interdits
             </pre>
           </div>
         </span>

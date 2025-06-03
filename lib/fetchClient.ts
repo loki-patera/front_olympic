@@ -64,14 +64,14 @@ export const fetchClient = async <T> ({
   // Effectue la requête à l'API en utilisant l'URL de base et le point de terminaison spécifié
   const res = await fetch(url, options)
 
-  if (!res.ok) {
+  // Tente de convertir la réponse en JSON, sinon retourne un objet vide
+  const response = await res.json().catch(() => ({}))
+
+  if (!res.ok && res.status >= 500) {
     // Si la réponse n'est pas correcte, lève une erreur avec le code et le message d'erreur
     const errorMessage = `Erreur ${method} sur ${endpoint}: ${res.status} ${res.statusText}`
     throw new Error(errorMessage)
   }
-
-  // Parse la réponse JSON
-  const response = await res.json()
 
   return response
 }

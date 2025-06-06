@@ -5,6 +5,8 @@ import { CustomButton } from "../../components/shared/CustomButton"
 import { useCart } from "../../context/CartContext"
 import { formatDate, formatTime } from "../../utils/dateUtils"
 import { useSportStore } from "../../stores"
+import CustomSlideOver from "../../components/shared/CustomSlideOver"
+import { useState } from "react"
 
 /**
  * Composant `Cart` pour afficher la page du panier de réservations de l'application.
@@ -31,9 +33,16 @@ export default function Cart(): React.JSX.Element {
   // Récupération de la fonction setSport du store pour gérer le retour à la page de réservation
   const { setSport } = useSportStore()
 
+  // État pour ouvrir/fermer le SlideOver
+  const [isSlideOverOpen, setIsSlideOverOpen] = useState(false)
+
   return (
 
     <main>
+
+      {/* SlideOver affiché si isSlideOverOpen est true */}
+      {isSlideOverOpen && <CustomSlideOver />}
+
       <div className="max-w-2xl mx-auto py-16 px-6 lg:px-0">
         <h1 className="text-3xl text-center sm:text-4xl font-extrabold text-gray-400">
           Panier de réservations
@@ -111,13 +120,13 @@ export default function Cart(): React.JSX.Element {
           {cartDetails.length === 0 ? (
             <div className="mt-6 space-y-2 flex flex-col items-center">
               <div
-                className="px-4 py-1 rounded bg-yellow-100 border border-yellow-400 text-yellow-800 text-sm flex items-center justify-center"
+                className="px-4 py-1 rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs flex items-center justify-center"
                 role="alert"
               >
                 Ajoutez au moins une réservation !
               </div>
               <div
-                className="px-4 py-1 rounded bg-yellow-100 border border-yellow-400 text-yellow-800 text-sm flex items-center justify-center"
+                className="px-4 py-1 rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs flex items-center justify-center"
                 role="alert"
               >
                 Connectez-vous pour valider votre panier !
@@ -125,18 +134,20 @@ export default function Cart(): React.JSX.Element {
             </div>
           ) : (
             <div
-              className="mt-6 px-4 py-1 w-fit mx-auto rounded bg-yellow-100 border border-yellow-400 text-yellow-800 text-sm flex items-center justify-center"
+              className="mt-6 px-4 py-1 w-fit mx-auto rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs"
               role="alert"
             >
               Connectez-vous pour valider votre panier !
             </div>
           )}
 
-          <div className="flex justify-center mt-10">
+          <div className="flex justify-center mt-8">
             <CustomButton
               className="w-56 text-base text-white py-2 bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
               disabled
               label="Valider votre panier"
+              // Ouvre le SlideOver au clic
+              onClick={() => setIsSlideOverOpen(true)}
             />
           </div>
 
@@ -144,6 +155,7 @@ export default function Cart(): React.JSX.Element {
             <Link
               href="/pages/booking"
               className="font-semibold text-sm text-gray-500 cursor-pointer hover:text-bluejo hover:underline-offset-4 hover:underline"
+              // Réinitialise le sport sélectionné et redirige vers la page de réservation
               onClick={() => setSport(null)}
             >
               Ajouter une réservation

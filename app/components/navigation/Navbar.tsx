@@ -16,7 +16,7 @@ import { CartType } from '../../types'
  * <Navbar />
  * ```
  */
-export const Navbar = ():React.JSX.Element => {
+export const Navbar = (): React.JSX.Element => {
 
   // Récupération du contexte pour le panier
   const { cart, cartDetails } = useCart()
@@ -108,7 +108,7 @@ export const Navbar = ():React.JSX.Element => {
               colorIcon="text-bluejo"
               variant="user"
               menuItems={[
-                { label: "Se connecter", href: "/" }
+                { label: "Se connecter", href: "/pages/login" }
               ]}
             />
 

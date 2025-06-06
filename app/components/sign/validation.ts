@@ -83,14 +83,14 @@ export const validateBirthDate = (value: UserType["date_of_birth"]): boolean => 
  * Fonction `validateCountry` pour valider un pays
  * 
  * @param {UserType["country"]} value - Le pays à valider
- * @param {string[]} countryList - La liste des pays autorisés
+ * @param {string[]} countries - La liste des pays autorisés
  * 
  * @return {boolean} - Retourne `true` si le pays est valide, sinon `false`
  */
-export const validateCountry = (value: UserType["country"], countryList: string[]): boolean => {
+export const validateCountry = (value: UserType["country"], countries: string[]): boolean => {
 
   // Vérifie si le pays est dans la liste des pays autorisés
-  return countryList.includes(value)
+  return countries.includes(value)
 }
 
 /**

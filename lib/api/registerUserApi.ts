@@ -5,7 +5,7 @@ import { fetchClient } from '../fetchClient'
  * Fonction pour enregistrer un nouvel utilisateur.
  *
  * @param {Omit<UserType, "id_person">} data - Les données de l'utilisateur à enregistrer, sans l'ID de la personne.
- * @returns {Promise<{ success: boolean; user_id?: string; errors?: string }>} - Promesse contenant le résultat de l'enregistrement.
+ * @returns {Promise<{ success: boolean; errors?: string }>} - Promesse contenant le résultat de l'enregistrement.
  *
  * @example
  * ```ts
@@ -21,11 +21,11 @@ import { fetchClient } from '../fetchClient'
  */
 export const registerUser = async (
   data: Omit<UserType, "id_person">
-): Promise<{ success: boolean; user_id?: string; errors?: string }> => {
+): Promise<{ success: boolean; errors?: string }> => {
 
   // Envoie les données de l'utilisateur à l'API pour l'enregistrement
   return fetchClient({
-    endpoint: "/api/register",
+    endpoint: "/api/registerUser",
     method: "POST",
     data
   })

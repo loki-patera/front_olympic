@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { ChangeEventHandler, FocusEventHandler, FormEventHandler, MouseEventHandler, useState } from 'react'
 import { CustomButton } from '../shared/CustomButton'
 import { checkEmailExists, registerUser } from '../../../lib/api'
-import countries from 'world-countries'
 import { validateEmail, validateFirstname, validateLastname, validateBirthDate, validateCountry, validatePassword, validateConfirmPassword } from './validation'
 import { BirthDateField, ConfirmPasswordField, CountrySelect, EmailField, FirstNameField, LastNameField, PasswordField } from './fields'
 import { UserType } from '../../types'
@@ -113,25 +112,49 @@ export const SignForm = (): React.JSX.Element => {
   // État local pour les messages d'erreur de chaque champ
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
+  // État local pour les erreurs globales
+  const [globalError, setGlobalError] = useState<string>("")
+
 
   // ----------------------------------------------------------------- Liste des pays ----------------------------------------------------------------
 
-  // Liste des pays pour le champ de sélection
-  const countryList = countries
-    .map(c => ({
-      code: c.cca2,
-      name: c.translations.fra?.common || c.name.common
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }))
-  
-  // Liste des noms de pays pour la validation
-  const countryNames = countryList.map(c => c.name)
+  const countries = [
+    "Afghanistan", "Afrique du Sud", "Ahvenanmaa", "Albanie", "Algérie", "Allemagne", "Andorre", "Angola", "Anguilla", "Antarctique",
+    "Antigua-et-Barbuda", "Arabie Saoudite", "Argentine", "Arménie", "Aruba", "Australie", "Autriche", "Azerbaïdjan", "Bahamas", "Bahreïn",
+    "Bangladesh", "Barbade", "Belgique", "Belize", "Bénin", "Bermudes", "Bhoutan", "Biélorussie", "Birmanie", "Bolivie", "Bosnie-Herzégovine",
+    "Botswana", "Brésil", "Brunei", "Bulgarie", "Burkina Faso", "Burundi", "Cambodge", "Cameroun", "Canada", "Chili", "Chine", "Chypre",
+    "Cité du Vatican", "Colombie", "Comores", "Congo", "Congo (Rép. dém.)", "Corée du Nord", "Corée du Sud", "Costa Rica", "Côte d'Ivoire",
+    "Croatie", "Cuba", "Curaçao", "Danemark", "Djibouti", "Dominique", "Égypte", "Émirats arabes unis", "Équateur", "Érythrée", "Espagne",
+    "Estonie", "États-Unis", "Éthiopie", "Fidji", "Finlande", "France", "Gabon", "Gambie", "Géorgie", "Géorgie du Sud-et-les Îles Sandwich du Sud",
+    "Ghana", "Gibraltar", "Grèce", "Grenade", "Groenland", "Guadeloupe", "Guam", "Guatemala", "Guernesey", "Guinée", "Guinée équatoriale",
+    "Guinée-Bissau", "Guyana", "Guyane", "Haïti", "Honduras", "Hong Kong", "Hongrie", "Île Bouvet", "Île Christmas", "Île de Man", "Île Maurice",
+    "Île Norfolk", "Îles Caïmans", "Îles Cocos", "Îles Cook", "Îles du Cap-Vert", "Îles Féroé", "Îles Heard-et-MacDonald", "Îles Malouines",
+    "Îles Mariannes du Nord", "Îles Marshall", "Îles mineures éloignées des États-Unis", "Îles Pitcairn", "Îles Salomon", "Îles Turques-et-Caïques",
+    "Îles Vierges britanniques", "Îles Vierges des États-Unis", "Inde", "Indonésie", "Irak", "Iran", "Irlande", "Islande", "Israël", "Italie",
+    "Jamaïque", "Japon", "Jersey", "Jordanie", "Kazakhstan", "Kenya", "Kirghizistan", "Kiribati", "Kosovo", "Koweït", "Laos", "Lesotho", "Lettonie",
+    "Liban", "Liberia", "Libye", "Liechtenstein", "Lituanie", "Luxembourg", "Macao", "Macédoine du Nord", "Madagascar", "Malaisie", "Malawi",
+    "Maldives", "Mali", "Malte", "Maroc", "Martinique", "Mauritanie", "Mayotte", "Mexique", "Micronésie", "Moldavie", "Monaco", "Mongolie",
+    "Monténégro", "Montserrat", "Mozambique", "Namibie", "Nauru", "Népal", "Nicaragua", "Niger", "Nigéria", "Niue", "Norvège", "Nouvelle-Calédonie",
+    "Nouvelle-Zélande", "Oman", "Ouganda", "Ouzbékistan", "Pakistan", "Palaos (Palau)", "Palestine", "Panama", "Papouasie-Nouvelle-Guinée",
+    "Paraguay", "Pays-Bas", "Pays-Bas caribéens", "Pérou", "Philippines", "Pologne", "Polynésie française", "Porto Rico", "Portugal", "Qatar",
+    "République centrafricaine", "République dominicaine", "Réunion", "Roumanie", "Royaume-Uni", "Russie", "Rwanda", "Sahara Occidental",
+    "Saint-Barthélemy", "Saint-Christophe-et-Niévès", "Saint-Marin", "Saint-Martin", "Saint-Pierre-et-Miquelon", "Saint-Vincent-et-les-Grenadines",
+    "Sainte-Hélène, Ascension et Tristan da Cunha", "Sainte-Lucie", "Salvador", "Samoa", "Samoa américaines", "São Tomé et Príncipe", "Sénégal",
+    "Serbie", "Seychelles", "Sierra Leone", "Singapour", "Slovaquie", "Slovénie", "Somalie", "Soudan", "Soudan du Sud", "Sri Lanka", "Suède",
+    "Suisse", "Surinam", "Svalbard et Jan Mayen", "Swaziland", "Syrie", "Tadjikistan", "Taïwan", "Tanzanie", "Tchad", "Tchéquie",
+    "Terres australes et antarctiques françaises", "Territoire britannique de l'océan Indien", "Thaïlande", "Timor oriental", "Togo", "Tokelau",
+    "Tonga", "Trinité-et-Tobago", "Tunisie", "Turkménistan", "Turquie", "Tuvalu", "Ukraine", "Uruguay", "Vanuatu", "Venezuela", "Viêt Nam",
+    "Wallis-et-Futuna", "Yémen", "Zambie", "Zimbabwe"
+  ]
   
 
   // ------------------------------------------------------------ Gestions des changements -----------------------------------------------------------
 
   // Fonction pour gérer les changements dans le champ email
-  const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleEmailChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+
+    // Réinitialise les erreurs globales
+    setGlobalError("")
 
     // Récupère la valeur de l'input
     const { value } = e.target
@@ -162,8 +185,11 @@ export const SignForm = (): React.JSX.Element => {
   }
 
   // Fonction pour gérer les changements dans le champ prénom
-  const handleFirstnameChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleFirstnameChange: ChangeEventHandler<HTMLInputElement> = (e) => {
 
+    // Réinitialise les erreurs globales
+    setGlobalError("")
+    
     // Récupère la valeur de l'input
     const { value } = e.target
 
@@ -187,8 +213,11 @@ export const SignForm = (): React.JSX.Element => {
   }
 
   // Fonction pour gérer les changements dans le champ nom
-  const handleLastnameChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleLastnameChange: ChangeEventHandler<HTMLInputElement> = (e) => {
 
+    // Réinitialise les erreurs globales
+    setGlobalError("")
+    
     // Récupère la valeur de l'input
     const { value } = e.target
 
@@ -212,8 +241,11 @@ export const SignForm = (): React.JSX.Element => {
   }
 
   // Fonction pour gérer les changements dans le champ date de naissance
-  const handleBirthDateChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleBirthDateChange: ChangeEventHandler<HTMLInputElement> = (e) => {
 
+    // Réinitialise les erreurs globales
+    setGlobalError("")
+    
     // Récupère la valeur de l'input
     const { value } = e.target
 
@@ -237,8 +269,11 @@ export const SignForm = (): React.JSX.Element => {
   }
 
   // Fonction pour gérer les changements dans le champ pays
-  const handleCountryChange: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+  const handleCountryChange: ChangeEventHandler<HTMLSelectElement> = (e) => {
 
+    // Réinitialise les erreurs globales
+    setGlobalError("")
+    
     // Récupère la valeur de l'input
     const { value } = e.target
 
@@ -246,7 +281,7 @@ export const SignForm = (): React.JSX.Element => {
     setCountry(value)
 
     // Récupère la validité du pays en utilisant la fonction de validation
-    const valid = validateCountry(value, countryNames)
+    const valid = validateCountry(value, countries)
 
     // Met à jour l'état de validité du pays
     setIsCountryValid(valid)
@@ -262,8 +297,11 @@ export const SignForm = (): React.JSX.Element => {
   }
 
   // Fonction pour gérer les changements dans le champ mot de passe
-  const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handlePasswordChange: ChangeEventHandler<HTMLInputElement> = (e) => {
 
+    // Réinitialise les erreurs globales
+    setGlobalError("")
+    
     // Récupère la valeur de l'input
     const { value } = e.target
 
@@ -290,8 +328,11 @@ export const SignForm = (): React.JSX.Element => {
   }
 
   // Fonction pour gérer les changements dans le champ de confirmation du mot de passe
-  const handleConfirmPasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleConfirmPasswordChange: ChangeEventHandler<HTMLInputElement> = (e) => {
 
+    // Réinitialise les erreurs globales
+    setGlobalError("")
+    
     // Récupère la valeur de l'input
     const { value } = e.target
 
@@ -303,64 +344,55 @@ export const SignForm = (): React.JSX.Element => {
 
     // Met à jour l'état de validité du mot de passe de confirmation
     setIsConfirmPasswordValid(valid)
-
-    // Réinitialise les erreurs du champ de confirmation du mot de passe
-    setFieldErrors(prev => ({ ...prev, confirmPassword: valid ? "" : prev.confirmPassword }))
-
-    // Si le champ bloquant est la confirmation du mot de passe et que la confirmation est valide
-    if (blockingField === "confirm_password" && valid) {
-      // Réinitialise le champ bloquant
-      setBlockingField(null)
-    }
   }
 
 
   // ---------------------------------------------------------- Gestion de la perte de focus ---------------------------------------------------------
 
   // Fonction pour gérer la perte de focus du champ email
-  const handleEmailBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+  const handleEmailBlur: FocusEventHandler<HTMLInputElement> = () => {
 
     // Marque le champ email comme touché
     setEmailTouched(true)
   }
 
   // Fonction pour gérer la perte de focus du champ prénom
-  const handleFirstnameBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+  const handleFirstnameBlur: FocusEventHandler<HTMLInputElement> = () => {
 
     // Marque le champ prénom comme touché
     setFirstnameTouched(true)
   }
 
   // Fonction pour gérer la perte de focus du champ nom
-  const handleLastnameBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+  const handleLastnameBlur: FocusEventHandler<HTMLInputElement> = () => {
 
     // Marque le champ nom comme touché
     setLastnameTouched(true)
   }
 
   // Fonction pour gérer la perte de focus du champ date de naissance
-  const handleBirthDateBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+  const handleBirthDateBlur: FocusEventHandler<HTMLInputElement> = () => {
 
     // Marque le champ date de naissance comme touché
     setBirthDateTouched(true)
   }
 
   // Fonction pour gérer la perte de focus du champ pays
-  const handleCountryBlur: React.FocusEventHandler<HTMLSelectElement> = () => {
+  const handleCountryBlur: FocusEventHandler<HTMLSelectElement> = () => {
 
     // Marque le champ pays comme touché
     setCountryTouched(true)
   }
 
   // Fonction pour gérer la perte de focus du champ mot de passe
-  const handlePasswordBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+  const handlePasswordBlur: FocusEventHandler<HTMLInputElement> = () => {
 
     // Marque le champ mot de passe comme touché
     setPasswordTouched(true)
   }
 
   // Fonction pour gérer la perte de focus du champ de confirmation du mot de passe
-  const handleConfirmPasswordBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+  const handleConfirmPasswordBlur: FocusEventHandler<HTMLInputElement> = () => {
 
     // Marque le champ de confirmation du mot de passe comme touché
     setConfirmPasswordTouched(true)
@@ -370,7 +402,7 @@ export const SignForm = (): React.JSX.Element => {
   // ------------------------------------------------------------ Soumission du formulaire -----------------------------------------------------------
 
   // Fonction pour gérer la soumission du formulaire
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 
     // Empêche le comportement par défaut du formulaire et le rechargement de la page
     e.preventDefault()
@@ -386,6 +418,9 @@ export const SignForm = (): React.JSX.Element => {
 
       // Passe à l'étape du mot de passe
       setIsPasswordStep(true)
+
+      // Réinitialise les erreurs globales
+      setGlobalError("")
 
       return
     }
@@ -490,11 +525,6 @@ export const SignForm = (): React.JSX.Element => {
             setIsPasswordValid(false)
             setBlockingField("password")
           }
-          if (errors.confirmPassword) {
-            setConfirmPasswordTouched(true)
-            setIsConfirmPasswordValid(false)
-            setBlockingField("confirmPassword")
-          }
 
           // Si une erreur concerne un champ de l'étape précédente, on revient à cette étape
           if (errors.email || errors.firstname || errors.lastname || errors.date_of_birth || errors.country) {
@@ -508,6 +538,13 @@ export const SignForm = (): React.JSX.Element => {
 
         // Réinitialise le message de succès
         setSuccessMessage("")
+
+        // En cas d'erreur technique, retourne au formulaire de connexion
+        setIsPasswordStep(false)
+        setIsCreatingAccount(false)
+
+        // Met à jour l'état des erreurs globales avec un message d'erreur
+        setGlobalError("L'inscription a échoué suite à un problème technique. Veuillez réessayer plus tard.")
         
       } finally {
 
@@ -525,16 +562,22 @@ export const SignForm = (): React.JSX.Element => {
 
     try {
 
+      // Réinitialise les erreurs globales
+      setGlobalError("")
+
       // Appelle l'API pour vérifier si l'email existe
       const exists = await checkEmailExists(email)
 
       // Met à jour l'état `emailExists` avec le résultat de la vérification
       setEmailExists(exists)
 
-    } catch {
+    } catch (error) {
 
       // En cas d'erreur, considère que l'email n'existe pas
-      setEmailExists(false)
+      setEmailExists(null)
+
+      // Met à jour l'état des erreurs globales avec un message d'erreur
+      setGlobalError("Erreur technique lors de la vérification de l'email. Veuillez réessayer plus tard.")
 
     } finally {
 
@@ -544,7 +587,7 @@ export const SignForm = (): React.JSX.Element => {
   }
 
   // Fonction pour gérer la création d'un nouveau compte
-  const handleCreateAccount: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+  const handleCreateAccount: MouseEventHandler<HTMLButtonElement> = (e) => {
 
     // Empêche le comportement par défaut du bouton
     e.preventDefault()
@@ -675,7 +718,7 @@ export const SignForm = (): React.JSX.Element => {
                       onBlur={handleCountryBlur}
                       isValid={isCountryValid}
                       touched={countryTouched}
-                      countryList={countryList}
+                      countries={countries}
                     />
                   </>
                 )}
@@ -758,8 +801,20 @@ export const SignForm = (): React.JSX.Element => {
         </div>
 
         {successMessage && !isCreatingAccount && !isPasswordStep && (
-          <div className="mt-4 px-4 py-0.5 w-fit mx-auto rounded-lg bg-green-100 border border-green-400 text-green-700 text-sm text-center">
+          <div
+            className="mt-4 px-4 py-0.5 w-fit mx-auto rounded-lg bg-green-100 border border-green-400 text-green-700 text-xs text-center"
+            role="alert"
+          >
             {successMessage}
+          </div>
+        )}
+
+        {globalError && (
+          <div
+            className="mt-4 px-4 py-0.5 w-fit mx-auto rounded-lg bg-red-100 border border-red-400 text-red-700 text-xs text-center"
+            role="alert"
+          >
+            {globalError}
           </div>
         )}
       </div>

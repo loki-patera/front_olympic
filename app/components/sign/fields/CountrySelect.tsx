@@ -1,14 +1,18 @@
 import { FieldProps } from './FieldProps'
 
-type CountryType = {
-  code: string
-  name: string
-}
-
-interface CountrySelectProps extends Omit<FieldProps, "onChange" | "onBlur"> {
+/**
+ * Interface `CountrySelectProps` définissant les propriétés du composant {@link CountrySelect}.
+ * 
+ * @extends FieldProps
+ * 
+ * @property onChange - Fonction appelée lors du changement de valeur du champ de sélection.
+ * @property onBlur - Fonction appelée lors de la perte de focus du champ de sélection.
+ * @property countries - Liste des pays à afficher dans le champ de sélection.
+ */
+export interface CountrySelectProps extends Omit<FieldProps, "onChange" | "onBlur"> {
   onChange(e: React.ChangeEvent<HTMLSelectElement>): void
   onBlur(e: React.FocusEvent<HTMLSelectElement>): void
-  countryList: CountryType[]
+  countries: string[]
 }
 
 /**
@@ -22,7 +26,7 @@ interface CountrySelectProps extends Omit<FieldProps, "onChange" | "onBlur"> {
  *    onBlur={handleCountryBlur}
  *    isValid={isCountryValid}
  *    touched={countryTouched}
- *    countryList={countries}
+ *    countries={countries}
  * />
  * ```
  */
@@ -32,7 +36,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
   onBlur,
   isValid,
   touched,
-  countryList
+  countries
 }) => {
 
   return (
@@ -61,8 +65,8 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
             }`}
         >
           <option className="text-gray-400" value="">Sélectionnez un pays</option>
-          {countryList.map((c) => (
-            <option className="text-gray-900" key={c.code} value={c.name}>{c.name}</option>
+          {countries.map(country => (
+            <option className="text-gray-900" key={country} value={country}>{country}</option>
           ))}
         </select>
       </div>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react'
 import { ShoppingCartIcon as ShoppingCartIconOutline, UserIcon as UserIconOutline } from '@heroicons/react/24/outline'
 import { ShoppingCartIcon as ShoppingCartIconSolid, UserIcon as UserIconSolid } from '@heroicons/react/24/solid'
+import Link from 'next/link'
 
 /**
  * Interface `NavMenuProps` définissant les propriétés du composant {@link NavMenu}.
@@ -101,12 +102,12 @@ export const NavMenu: React.FC<NavMenuProps> = ({
           <MenuItem key={index}>
             {/* Si un lien `href` existe, il est rendu en priorité */}
             {item.href ? (
-              <a
+              <Link
                 href={item.href}
                 className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
               >
                 {item.label}
-              </a>
+              </Link>
             ) : item.custom ? (
               // Si un élément `custom` est défini, il est rendu
               item.custom

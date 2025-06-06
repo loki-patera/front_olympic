@@ -131,7 +131,8 @@ describe('fetchClient', () => {
     ;(fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 500,
-      statusText: 'Internal Server Error'
+      statusText: 'Internal Server Error',
+      json: jest.fn().mockResolvedValueOnce({})
     })
 
     // Vérifie que la fonction `fetchClient` lève une erreur lors d'une requête GET avec une réponse non ok
@@ -144,5 +145,23 @@ describe('fetchClient', () => {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     })
+  })
+
+  it("retourne un objet vide si la réponse n'est pas un JSON valide", async () => {
+
+    // Mock de la réponse de la requête GET avec une réponse non JSON
+    (fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockRejectedValueOnce(new Error("Invalid JSON"))
+    })
+  
+    // Appel de la fonction fetchClient avec une requête GET
+    const result = await fetchClient<{ data?: string }>({
+      endpoint: '/test',
+      method: 'GET'
+    })
+  
+    // Vérifie que le résultat retourné est un objet vide
+    expect(result).toEqual({})
   })
 })

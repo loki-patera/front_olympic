@@ -12,7 +12,7 @@ export interface CustomButtonProps {
   disabled?: boolean
   label: string
   type?: "button" | "submit" | "reset"
-  onClick?(): void
+  onClick?(e?: React.MouseEvent<HTMLButtonElement>): void
 }
 
 /**

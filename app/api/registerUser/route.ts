@@ -36,6 +36,6 @@ export const POST = async (
   } catch (error) {
 
     // Si une erreur se produit lors de l'enregistrement, retourne une réponse d'erreur avec le code 500
-    return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
+    return NextResponse.json({ error: "Erreur interne du serveur" }, { status: 500 })
   }
 }

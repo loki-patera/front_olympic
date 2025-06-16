@@ -27,25 +27,6 @@ export const FirstNameField: React.FC<FieldProps> = ({
     <div>
       <label htmlFor="firstName" className="text-sm/6 font-medium text-bluejo-dark flex items-center gap-2">
         Prénom
-        <span className="relative flex items-center group">
-          <button
-            type="button"
-            aria-label="Affiche le format de prénom valide"
-            className="ml-1 w-4 h-4 flex items-center justify-center rounded-full bg-yellowjo-light text-white text-xs font-bold
-              focus:outline-none"
-            tabIndex={0}
-          >
-            !
-          </button>
-          {/* Info-bulle pour le prénom */}
-          <div
-            className="absolute min-w-52 left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1 rounded text-gray-500 text-xs shadow-lg
-              border border-yellowjo-light bg-gray-50 hidden group-hover:block"
-          >
-            Format attendu : <br />
-            <span className="font-mono">John / Jean-Pierre</span>
-          </div>
-        </span>
       </label>
 
       <div className="mt-0.5">

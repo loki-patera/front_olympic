@@ -27,31 +27,6 @@ export const PasswordField: React.FC<FieldProps> = ({
     <div>
       <label htmlFor="password" className="text-sm/6 font-medium text-bluejo-dark flex items-center gap-2">
         Mot de passe
-        <span className="relative flex items-center group">
-          <button
-            type="button"
-            aria-label="Affiche le format de mot de passe valide"
-            className="ml-1 w-4 h-4 flex items-center justify-center rounded-full bg-yellowjo-light text-white text-xs font-bold
-              focus:outline-none"
-            tabIndex={0}
-          >
-            !
-          </button>
-          {/* Info-bulle pour le mot de passe */}
-          <div
-            className="absolute min-w-52 left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1 rounded text-gray-500 text-xs shadow-lg
-              border border-yellowjo-light bg-gray-50 hidden group-hover:block"
-          >
-            <pre>
-              16 caractères minimum<br />
-              1 majuscule<br />
-              1 minuscule<br />
-              1 chiffre<br />
-              1 caractère spécial<br />
-              Certains caractères sont interdits
-            </pre>
-          </div>
-        </span>
       </label>
 
       <input

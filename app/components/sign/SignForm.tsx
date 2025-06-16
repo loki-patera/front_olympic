@@ -1,11 +1,14 @@
 'use client'
 
 import { ChangeEventHandler, FocusEventHandler, FormEventHandler, MouseEventHandler, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { CustomButton } from '../shared/CustomButton'
-import { checkEmailExists, registerUser } from '../../../lib/api'
-import { validateEmail, validateFirstname, validateLastname, validateBirthDate, validateCountry, validatePassword, validateConfirmPassword } from './validation'
+import { checkEmailExists, loginUser, registerUser } from '../../../lib/api'
+import { validateEmail, validateFirstname, validateLastname, validateBirthDate, validateCountry, validatePassword, validateConfirmPassword,
+  FieldError } from './validation'
 import { BirthDateField, ConfirmPasswordField, CountrySelect, EmailField, FirstNameField, LastNameField, PasswordField } from './fields'
 import { UserType } from '../../types'
+import { useUser } from '../../context'
 
 /**
  * Composant `SignForm` pour gérer la connexion ou la création de compte.
@@ -16,6 +19,12 @@ import { UserType } from '../../types'
  * ```
  */
 export const SignForm = (): React.JSX.Element => {
+
+  // Utilisation du hook useRouter pour la navigation
+  const router = useRouter()
+
+  // Récupération de la fonction de connexion du contexte utilisateur
+  const { login } = useUser()
 
   // --------------------------------------------------------------------- États ---------------------------------------------------------------------
 
@@ -32,11 +41,14 @@ export const SignForm = (): React.JSX.Element => {
   const [emailExists, setEmailExists] = useState<boolean | null>(null)
 
 
-  // État local pour gérer le chargement lors de la vérification de l'email
+  // État local pour gérer le chargement
   const [loading, setLoading] = useState<boolean>(false)
 
-  // État local pour déterminer le mode de création de compte
-  const [isCreatingAccount, setIsCreatingAccount] = useState<boolean>(false)
+  // État local pour l'étape de connexion
+  const [isSignIn, setIsSignIn] = useState<boolean>(false)
+
+  // État local pour l'étape avant la création de compte
+  const [isBeforeSignUp, setIsBeforeSignUp] = useState<boolean>(false)
 
 
   // État local pour le prénom lors de la création de compte
@@ -79,8 +91,8 @@ export const SignForm = (): React.JSX.Element => {
   const [countryTouched, setCountryTouched] = useState<boolean>(false)
 
 
-  // État local pour gérer l'étape du mot de passe
-  const [isPasswordStep, setIsPasswordStep] = useState<boolean>(false)
+  // État local pour l'étape de la création de compte
+  const [isSignUp, setIsSignUp] = useState<boolean>(false)
 
 
   // État local pour le mot de passe
@@ -110,7 +122,7 @@ export const SignForm = (): React.JSX.Element => {
   const [blockingField, setBlockingField] = useState<string | null>(null)
 
   // État local pour les messages d'erreur de chaque champ
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [fieldErrors, setFieldErrors] = useState<Record<string, FieldError>>({})
 
   // État local pour les erreurs globales
   const [globalError, setGlobalError] = useState<string>("")
@@ -162,14 +174,22 @@ export const SignForm = (): React.JSX.Element => {
     // Met à jour l'état de l'email
     setEmail(value)
 
-    // Récupère la validité de l'email en utilisant la fonction de validation
-    const valid = validateEmail(value)
+    // Récupère l'état de validité de l'email en utilisant la fonction de validation
+    const error = validateEmail(value)
 
     // Met à jour l'état de validité de l'email
-    setIsEmailValid(valid)
+    setIsEmailValid(!error)
 
-    // Réinitialise les erreurs du champ email
-    setFieldErrors(prev => ({ ...prev, email: valid ? "" : prev.email }))
+    if (error) {
+      // Si l'email est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, email: error }))
+    } else {
+      // Si l'email est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { email, ...rest } = prev
+        return rest
+      })
+    }
 
     // Réinitialise l'état de `emailExists` à null à chaque changement
     setEmailExists(null)
@@ -177,11 +197,8 @@ export const SignForm = (): React.JSX.Element => {
     // Réinitialise le message de succès
     setSuccessMessage("")
 
-    // Si le champ bloquant est l'email et que l'email est valide
-    if (blockingField === "email" && valid) {
-      // Réinitialise le champ bloquant
-      setBlockingField(null)
-    }
+    // Si le champ bloquant est l'email et qu'il n'y a pas d'erreur, réinitialise le champ bloquant
+    if (blockingField === "email" && !error) setBlockingField(null)
   }
 
   // Fonction pour gérer les changements dans le champ prénom
@@ -196,20 +213,25 @@ export const SignForm = (): React.JSX.Element => {
     // Met à jour l'état du prénom
     setFirstname(value)
 
-    // Récupère la validité du prénom en utilisant la fonction de validation
-    const valid = validateFirstname(value)
+    // Récupère l'état de validité du prénom en utilisant la fonction de validation
+    const error = validateFirstname(value)
 
     // Met à jour l'état de validité du prénom
-    setIsFirstnameValid(valid)
+    setIsFirstnameValid(!error)
 
-    // Réinitialise les erreurs du champ prénom
-    setFieldErrors(prev => ({ ...prev, firstname: valid ? "" : prev.firstname }))
-
-    // Si le champ bloquant est le prénom et que le prénom est valide
-    if (blockingField === "firstname" && valid) {
-      // Réinitialise le champ bloquant
-      setBlockingField(null)
+    if (error) {
+      // Si le prénom est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, firstname: error }))
+    } else {
+      // Si le prénom est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { firstname, ...rest } = prev
+        return rest
+      })
     }
+
+    // Si le champ bloquant est le prénom et qu'il n'y a pas d'erreur, réinitialise le champ bloquant
+    if (blockingField === "firstname" && !error) setBlockingField(null)
   }
 
   // Fonction pour gérer les changements dans le champ nom
@@ -224,20 +246,25 @@ export const SignForm = (): React.JSX.Element => {
     // Met à jour l'état du nom
     setLastname(value)
 
-    // Récupère la validité du nom en utilisant la fonction de validation
-    const valid = validateLastname(value)
+    // Récupère l'état de validité du nom de famille en utilisant la fonction de validation
+    const error = validateLastname(value)
+    
+    // Met à jour l'état de validité du nom de famille
+    setIsLastnameValid(!error)
 
-    // Met à jour l'état de validité du nom
-    setIsLastnameValid(valid)
-
-    // Réinitialise les erreurs du champ nom
-    setFieldErrors(prev => ({ ...prev, lastname: valid ? "" : prev.lastname }))
-
-    // Si le champ bloquant est le nom et que le nom est valide
-    if (blockingField === "lastname" && valid) {
-      // Réinitialise le champ bloquant
-      setBlockingField(null)
+    if (error) {
+      // Si le nom de famille est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, lastname: error }))
+    } else {
+      // Si le nom de famille est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { lastname, ...rest } = prev
+        return rest
+      })
     }
+
+    // Si le champ bloquant est le nom et qu'il n'y a pas d'erreur, réinitialise le champ bloquant
+    if (blockingField === "lastname" && !error) setBlockingField(null)
   }
 
   // Fonction pour gérer les changements dans le champ date de naissance
@@ -252,20 +279,25 @@ export const SignForm = (): React.JSX.Element => {
     // Met à jour l'état de la date de naissance
     setBirthDate(value)
 
-    // Récupère la validité de la date de naissance en utilisant la fonction de validation
-    const valid = validateBirthDate(value)
+    // Récupère l'état de validité de la date de naissance en utilisant la fonction de validation
+    const error = validateBirthDate(value)
 
     // Met à jour l'état de validité de la date de naissance
-    setIsBirthDateValid(valid)
+    setIsBirthDateValid(!error)
 
-    // Réinitialise les erreurs du champ date de naissance
-    setFieldErrors(prev => ({ ...prev, date_of_birth: valid ? "" : prev.date_of_birth }))
-
-    // Si le champ bloquant est la date de naissance et que la date de naissance est valide
-    if (blockingField === "date_of_birth" && valid) {
-      // Réinitialise le champ bloquant
-      setBlockingField(null)
+    if (error) {
+      // Si la date de naissance est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, date_of_birth: error }))
+    } else {
+      // Si la date de naissance est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { date_of_birth, ...rest } = prev
+        return rest
+      })
     }
+
+    // Si le champ bloquant est la date de naissance et qu'il n'y a pas d'erreur, réinitialise le champ bloquant
+    if (blockingField === "date_of_birth" && !error) setBlockingField(null)
   }
 
   // Fonction pour gérer les changements dans le champ pays
@@ -280,20 +312,25 @@ export const SignForm = (): React.JSX.Element => {
     // Met à jour l'état du pays
     setCountry(value)
 
-    // Récupère la validité du pays en utilisant la fonction de validation
-    const valid = validateCountry(value, countries)
+    // Récupère l'état de validité du pays en utilisant la fonction de validation
+    const error = validateCountry(value, countries)
 
     // Met à jour l'état de validité du pays
-    setIsCountryValid(valid)
+    setIsCountryValid(!error)
 
-    // Réinitialise les erreurs du champ pays
-    setFieldErrors(prev => ({ ...prev, country: valid ? "" : prev.country }))
-
-    // Si le champ bloquant est le pays et que le pays est valide
-    if (blockingField === "country" && valid) {
-      // Réinitialise le champ bloquant
-      setBlockingField(null)
+    if (error) {
+      // Si le pays est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, country: error }))
+    } else {
+      // Si le pays est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { country, ...rest } = prev
+        return rest
+      })
     }
+
+    // Si le champ bloquant est le pays et que le pays est valide, réinitialise le champ bloquant
+    if (blockingField === "country" && !error) setBlockingField(null)
   }
 
   // Fonction pour gérer les changements dans le champ mot de passe
@@ -308,23 +345,28 @@ export const SignForm = (): React.JSX.Element => {
     // Met à jour l'état du mot de passe
     setPassword(value)
 
-    // Récupère la validité du mot de passe en utilisant la fonction de validation
-    const valid = validatePassword(value)
+    // Récupère l'état de validité du mot de passe en utilisant la fonction de validation
+    const error = validatePassword(value)
 
     // Met à jour l'état de validité du mot de passe
-    setIsPasswordValid(valid)
+    setIsPasswordValid(!error)
+
+    if (error) {
+      // Si le mot de passe est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, password: error }))
+    } else {
+      // Si le mot de passe est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { password, ...rest } = prev
+        return rest
+      })
+    }
 
     // Met à jour la validité du mot de passe de confirmation en fonction du nouveau mot de passe
-    setIsConfirmPasswordValid(validateConfirmPassword(confirmPassword, value))
+    setIsConfirmPasswordValid(!validateConfirmPassword(confirmPassword, value))
 
-    // Réinitialise les erreurs du champ mot de passe
-    setFieldErrors(prev => ({ ...prev, password: valid ? "" : prev.password }))
-
-    // Si le champ bloquant est le mot de passe et que le mot de passe est valide
-    if (blockingField === "password" && valid) {
-      // Réinitialise le champ bloquant
-      setBlockingField(null)
-    }
+    // Si le champ bloquant est le mot de passe et qu'il y a une erreur, réinitialise le champ bloquant
+    if (blockingField === "password" && !error) setBlockingField(null)
   }
 
   // Fonction pour gérer les changements dans le champ de confirmation du mot de passe
@@ -339,11 +381,22 @@ export const SignForm = (): React.JSX.Element => {
     // Met à jour l'état du mot de passe de confirmation
     setConfirmPassword(value)
 
-    // Récupère la validité du mot de passe de confirmation en utilisant la fonction de validation
-    const valid = validateConfirmPassword(value, password)
+    // Récupère l'état de validité du mot de passe de confirmation en utilisant la fonction de validation
+    const error = validateConfirmPassword(value, password)
 
     // Met à jour l'état de validité du mot de passe de confirmation
-    setIsConfirmPasswordValid(valid)
+    setIsConfirmPasswordValid(!error)
+
+    if (error) {
+      // Si le mot de passe de confirmation est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, confirmPassword: error }))
+    } else {
+      // Si le mot de passe de confirmation est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { confirmPassword, ...rest } = prev
+        return rest
+      })
+    }
   }
 
 
@@ -407,17 +460,52 @@ export const SignForm = (): React.JSX.Element => {
     // Empêche le comportement par défaut du formulaire et le rechargement de la page
     e.preventDefault()
 
-    // Si l'email existe
-    if (emailExists === true) {
+    // Si à l'étape de connexion
+    if (isSignIn) {
 
+      // Met à jour l'état de chargement à true
+      setLoading(true)
+
+      try {
+
+        // Appelle l'API pour connecter l'utilisateur
+        const result = await loginUser({ email, password })
+
+        // Si l'API retourne un objet avec la clé "success" à true
+        if ("success" in result && result.success) {
+
+          // Appel de la fonction de connexion du contexte utilisateur
+          await login()
+
+          // Redirection vers la page d'accueil
+          router.push("/")
+          
+          return
+        }
+        // Si l'API retourne un objet avec la clé "detail"
+        else if ("detail" in result) {
+
+          // Met à jour l'état des erreurs globales
+          setGlobalError(result.detail)
+        }
+      } catch (error) {
+
+        // Met à jour l'état des erreurs globales avec un message d'erreur
+        setGlobalError("Échec de la connexion. Vérifiez votre mot de passe.")
+
+      } finally {
+
+        // Met à jour l'état de chargement à false après la soumission
+        setLoading(false)
+      }
       return
     }
 
-    // Si en mode création de compte et pas à l'étape du mot de passe
-    if (isCreatingAccount && !isPasswordStep) {
+    // Si à la première étape de la création de compte
+    if (isBeforeSignUp && !isSignUp) {
 
-      // Passe à l'étape du mot de passe
-      setIsPasswordStep(true)
+      // Passe à l'étape suivante de la création de compte
+      setIsSignUp(true)
 
       // Réinitialise les erreurs globales
       setGlobalError("")
@@ -425,8 +513,8 @@ export const SignForm = (): React.JSX.Element => {
       return
     }
 
-    // Si à l'étape du mot de passe
-    if (isPasswordStep) {
+    // Si à l'étape finale de la création de compte
+    if (isSignUp) {
 
       // Met à jour l'état de chargement à true
       setLoading(true)
@@ -444,7 +532,7 @@ export const SignForm = (): React.JSX.Element => {
 
         if (result.success) {
 
-          // En cas de succès, affiche un message de succès
+          // En cas de succès de l'inscription, affiche un message de succès
           setSuccessMessage("Inscription réussie !")
 
           // Réinitialise tous les champs du formulaire et les états associés
@@ -452,7 +540,7 @@ export const SignForm = (): React.JSX.Element => {
           setIsEmailValid(false)
           setEmailTouched(false)
           setEmailExists(null)
-          setIsCreatingAccount(false)
+          setIsBeforeSignUp(false)
           setFirstname("")
           setIsFirstnameValid(false)
           setFirstnameTouched(false)
@@ -465,7 +553,7 @@ export const SignForm = (): React.JSX.Element => {
           setCountry("")
           setIsCountryValid(false)
           setCountryTouched(false)
-          setIsPasswordStep(false)
+          setIsSignUp(false)
           setPassword("")
           setIsPasswordValid(false)
           setPasswordTouched(false)
@@ -477,17 +565,18 @@ export const SignForm = (): React.JSX.Element => {
         } else if (result.errors) {
 
           // Récupération des erreurs de l'API
-          const errors: any = result.errors
+          const errors: Record<string, string[]> = result.errors
 
           // Initialisation d'un objet pour stocker les erreurs de chaque champ
-          const newFieldErrors: Record<string, string> = {}
+          const newFieldErrors: Record<string, FieldError> = {}
 
           // Parcours des erreurs et les ajoute à l'objet `newFieldErrors`
           Object.entries(errors).forEach(([field, messages]) => {
-            if (Array.isArray(messages)) {
-              newFieldErrors[field] = messages[0]
-            } else if (typeof messages === "string") {
-              newFieldErrors[field] = messages
+            if (Array.isArray(messages) && messages.length > 0) {
+              newFieldErrors[field] = {
+                message: messages[0],     // Prend le premier message d'erreur
+                type: "error"             // Définit le type d'erreur
+              }
             }
           })
 
@@ -528,7 +617,7 @@ export const SignForm = (): React.JSX.Element => {
 
           // Si une erreur concerne un champ de l'étape précédente, on revient à cette étape
           if (errors.email || errors.firstname || errors.lastname || errors.date_of_birth || errors.country) {
-            setIsPasswordStep(false)
+            setIsSignUp(false)
           }
         }
       } catch (error) {
@@ -540,8 +629,8 @@ export const SignForm = (): React.JSX.Element => {
         setSuccessMessage("")
 
         // En cas d'erreur technique, retourne au formulaire de connexion
-        setIsPasswordStep(false)
-        setIsCreatingAccount(false)
+        setIsSignUp(false)
+        setIsBeforeSignUp(false)
 
         // Met à jour l'état des erreurs globales avec un message d'erreur
         setGlobalError("L'inscription a échoué suite à un problème technique. Veuillez réessayer plus tard.")
@@ -571,6 +660,17 @@ export const SignForm = (): React.JSX.Element => {
       // Met à jour l'état `emailExists` avec le résultat de la vérification
       setEmailExists(exists)
 
+      if (exists) {
+
+        // Si l'email existe, passe à l'étape de connexion
+        setIsSignIn(true)
+
+      } else {
+
+        // Si l'email n'existe pas, passe à l'étape de création de compte
+        setIsBeforeSignUp(true)
+      }
+
     } catch (error) {
 
       // En cas d'erreur, considère que l'email n'existe pas
@@ -592,8 +692,8 @@ export const SignForm = (): React.JSX.Element => {
     // Empêche le comportement par défaut du bouton
     e.preventDefault()
 
-    // Met à jour l'état pour indiquer que l'on est en mode création de compte
-    setIsCreatingAccount(true)
+    // Met à jour l'état de la première étape de la création de compte
+    setIsBeforeSignUp(true)
 
     // Réinitialise l'état de `emailExists` à null
     setEmailExists(null)
@@ -607,13 +707,13 @@ export const SignForm = (): React.JSX.Element => {
   const isButtonDisabled =
     !!(loading ||                     // En cours de chargement ou
       !isEmailValid ||                // Email invalide ou
-      (isCreatingAccount && (         // En mode création de compte et :
+      (isBeforeSignUp && (            // Si on est à la première étape de création de compte
         !isFirstnameValid ||            // Prénom invalide ou
         !isLastnameValid ||             // Nom invalide ou
         !isBirthDateValid ||            // Date de naissance invalide ou
         !isCountryValid ||              // Pays invalide ou
         (blockingField &&               // Si un champ est bloquant
-          (!isPasswordStep
+          (!isSignUp                        // Si on n'est pas à l'étape finale de création de compte
             ? ["email", "firstname", "lastname", "date_of_birth", "country"].includes(blockingField)
             : ["password", "confirmPassword"].includes(blockingField)
           )
@@ -625,16 +725,21 @@ export const SignForm = (): React.JSX.Element => {
 
   // Fonction pour afficher les erreurs spécifiques à l'étape
   const renderStepErrors = () => {
-    if (!isPasswordStep) {
+    if (!isSignUp) {
       return (
         <div>
           {["email", "firstname", "lastname", "date_of_birth", "country"].map(field =>
-            fieldErrors[field] && (
+            fieldErrors[field]?.message && (
               <div
                 key={field}
-                className="mt-2 px-4 py-0.5 w-fit mx-auto rounded-lg bg-red-100 border border-red-400 text-red-700 text-sm text-center"
+                className={`mt-2 px-4 py-0.5 w-fit mx-auto rounded-lg text-xs text-center border
+                  ${fieldErrors[field].type === "error"
+                    ? "bg-red-100 border-red-400 text-red-700"
+                    : "bg-yellow-100 border-yellow-400 text-yellow-800"
+                  }`}
+                role="alert"
               >
-                {fieldErrors[field]}
+                {fieldErrors[field].message}
               </div>
             )
           )}
@@ -647,27 +752,34 @@ export const SignForm = (): React.JSX.Element => {
           fieldErrors[field] && (
             <div
               key={field}
-              className="mt-2 px-4 py-0.5 w-fit mx-auto rounded-lg bg-red-100 border border-red-400 text-red-700 text-sm text-center"
+              className={`mt-2 px-4 py-0.5 w-fit mx-auto rounded-lg text-xs text-center border
+                ${fieldErrors[field].type === "error"
+                  ? "bg-red-100 border-red-400 text-red-700"
+                  : "bg-yellow-100 border-yellow-400 text-yellow-800"
+                }`}
+              role="alert"
             >
-              {fieldErrors[field]}
+              {fieldErrors[field].message}
             </div>
           )
         )}
       </div>
     )
   }
-  
+
   return (
 
     <main className="flex-1 flex items-center justify-center my-8">
       <div className="w-full max-w-md px-8">
           
         <h2 className="text-center text-2xl/9 font-bold text-gray-900">
-          {isPasswordStep
+          {isSignUp
             ? "Créez votre mot de passe"
-            : isCreatingAccount
-              ? "Complétez les informations suivantes"
-              : "Connectez-vous ou créez un compte"}
+            : isSignIn
+              ? "Entrez votre mot de passe"
+              : isBeforeSignUp
+                ? "Complétez les informations suivantes"
+                : "Connectez-vous ou créez un compte"}
         </h2>
 
         <div className="mt-10">
@@ -676,7 +788,7 @@ export const SignForm = (): React.JSX.Element => {
             // Gestion de la soumission du formulaire
             onSubmit={handleSubmit}
           >
-            {!isPasswordStep ? (
+            {!isSignUp && !isSignIn ? (
               <>
                 <EmailField
                   value={email}
@@ -686,7 +798,7 @@ export const SignForm = (): React.JSX.Element => {
                   touched={emailTouched}
                 />
 
-                {isCreatingAccount && (
+                {isBeforeSignUp && (
                   <>
                     <FirstNameField
                       value={firstname}
@@ -723,6 +835,14 @@ export const SignForm = (): React.JSX.Element => {
                   </>
                 )}
               </>
+            ) : isSignIn ? (
+              <PasswordField
+                value={password}
+                onChange={handlePasswordChange}
+                onBlur={handlePasswordBlur}
+                isValid={isPasswordValid}
+                touched={passwordTouched}
+              />
             ) : (
               <>
                 <PasswordField
@@ -742,29 +862,9 @@ export const SignForm = (): React.JSX.Element => {
               </>
             )}
 
-            {/* Si email inconnu et pas en mode création de compte */}
-            {emailExists === false && !isCreatingAccount && (
-              <div
-                className="px-4 py-0.5 w-fit mx-auto rounded-lg bg-red-100 border border-red-400 text-red-700 text-xs"
-                role="alert"
-              >
-                Email inconnu !
-              </div>
-            )}
-
-            {/* Si email reconnu */}
-            {emailExists === true && (
-              <div
-                className="px-4 py-0.5 w-fit mx-auto rounded-lg bg-green-100 border border-green-400 text-green-700 text-xs"
-                role="alert"
-              >
-                Email reconnu !
-              </div>
-            )}
-
             <div className="flex justify-center mt-5">
-              {!isPasswordStep ? (
-                emailExists === false && !isCreatingAccount ? (
+              {!isSignUp && !isSignIn ? (
+                emailExists === false && !isBeforeSignUp ? (
                   <CustomButton
                     className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
                     disabled={isButtonDisabled}
@@ -781,6 +881,13 @@ export const SignForm = (): React.JSX.Element => {
                     type="submit"
                   />
                 )
+              ) : isSignIn ? (
+                <CustomButton
+                  className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
+                  disabled={loading || !isPasswordValid}
+                  label={loading ? "Connexion..." : "Se connecter"}
+                  type="submit"
+                />
               ) : (
                 <CustomButton
                   className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
@@ -795,12 +902,22 @@ export const SignForm = (): React.JSX.Element => {
               )}
             </div>
 
+            {/* Si email inconnu et pas en mode création de compte */}
+            {emailExists === false && !isBeforeSignUp && (
+              <div
+                className="px-4 py-0.5 w-fit mx-auto rounded-lg bg-red-100 border border-red-400 text-red-700 text-xs"
+                role="alert"
+              >
+                Email inconnu !
+              </div>
+            )}
+
             {renderStepErrors()}
 
           </form>
         </div>
 
-        {successMessage && !isCreatingAccount && !isPasswordStep && (
+        {successMessage && !isBeforeSignUp && !isSignUp && (
           <div
             className="mt-4 px-4 py-0.5 w-fit mx-auto rounded-lg bg-green-100 border border-green-400 text-green-700 text-xs text-center"
             role="alert"

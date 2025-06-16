@@ -27,24 +27,6 @@ export const ConfirmPasswordField: React.FC<FieldProps> = ({
     <div>
       <label htmlFor="confirmPassword" className="text-sm/6 font-medium text-bluejo-dark flex items-center gap-2">
         Mot de passe de confirmation
-        <span className="relative flex items-center group">
-          <button
-            type="button"
-            aria-label="Affiche le format de mot de passe valide"
-            className="ml-1 w-4 h-4 flex items-center justify-center rounded-full bg-yellowjo-light text-white text-xs font-bold
-              focus:outline-none"
-            tabIndex={0}
-          >
-            !
-          </button>
-          {/* Info-bulle pour le mot de passe de confirmation */}
-          <div
-            className="absolute min-w-40 left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1 rounded text-gray-500 text-xs shadow-lg
-              border border-yellowjo-light bg-gray-50 hidden group-hover:block"
-          >
-            Doit correspondre au mot de passe principal
-          </div>
-        </span>
       </label>
       <input
         id="confirmPassword"

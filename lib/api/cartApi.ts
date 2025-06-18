@@ -13,7 +13,9 @@ import { fetchClient } from '../fetchClient'
  * const cartDetails = await getCartDetails(cart)
  * ```
  */
-export const getCartDetails = async (cart: CartItem[]): Promise<CartType[]> => {
+export const getCartDetails = async (
+  cart: CartItem[]
+): Promise<CartType[]> => {
 
   // Récupération des données pour le panier depuis l'API interne
   const cartDetails = await fetchClient<CartType[]>({

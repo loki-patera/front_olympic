@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { NavMenu, NavMenuProps } from '../../../../app/components/navigation/NavMenu'
 
 describe('Composant NavMenu', () => {
@@ -56,5 +57,34 @@ describe('Composant NavMenu', () => {
     // Vérifie que l'icône outline est de nouveau affichée
     expect(button.querySelector("svg")).toHaveClass("size-8")
     expect(button.querySelector("svg")).not.toHaveClass("text-gray-700")
+  })
+
+  it("rend un élément custom si item.custom est défini", async () => {
+
+    // Définit un élément personnalisé à utiliser dans le menu
+    const customElement = <button data-testid="custom-item">Bouton custom</button>
+
+    // Rendu du composant `NavMenu` avec un élément personnalisé
+    render(
+      <NavMenu
+        ariaLabel="Menu du panier"
+        colorIcon="text-blue-500"
+        variant="cart"
+        menuItems={[
+          { label: 'Item 1', href: '/item1' },
+          { label: 'Custom', custom: customElement }
+        ]}
+      />
+    )
+
+    // Simule un clic sur le bouton du menu pour ouvrir le menu
+    await userEvent.click(screen.getByLabelText('Menu du panier'))
+
+    // Attend que l'élément custom soit rendu dans le DOM
+    const custom = await screen.findByTestId('custom-item')
+  
+    // Vérifie que l'élément custom est bien rendu
+    expect(custom).toBeInTheDocument()
+    expect(custom).toHaveTextContent('Bouton custom')
   })
 })

@@ -38,6 +38,7 @@ export const SportSelect: React.FC<SportListProps> = ({
   const [selected, setSelected] = useState<SportType | null>(sport)
 
   useEffect(() => {
+    // Mise à jour de l'état local lorsque l'épreuve sportive sélectionnée change
     setSelected(sport)
   }, [sport])
 
@@ -45,7 +46,7 @@ export const SportSelect: React.FC<SportListProps> = ({
   const handleChange = (sport: SportType | null): void => {
     // Mise à jour de l'épreuve sportive sélectionnée dans le store
     setSport(sport)
-    // Mise à jour de l'état local
+    // Mise à jour de l'état local pour refléter la sélection actuelle
     setSelected(sport)
   }
 

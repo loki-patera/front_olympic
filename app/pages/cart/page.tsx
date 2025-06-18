@@ -1,12 +1,12 @@
 'use client'
 
-import Link from "next/link"
-import { CustomButton } from "../../components/shared/CustomButton"
-import { useCart } from "../../context/CartContext"
-import { formatDate, formatTime } from "../../utils/dateUtils"
-import { useSportStore } from "../../stores"
-import CustomSlideOver from "../../components/shared/CustomSlideOver"
-import { useState } from "react"
+import Link from 'next/link'
+import { useState } from 'react'
+import { CustomButton } from '../../components/shared/CustomButton'
+import { useCart } from '../../context'
+import { formatDate, formatTime } from '../../utils/dateUtils'
+import { useSportStore } from '../../stores'
+import CustomSlideOver from '../../components/shared/CustomSlideOver'
 
 /**
  * Composant `Cart` pour afficher la page du panier de réservations de l'application.

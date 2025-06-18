@@ -12,7 +12,9 @@ import { fetchClient } from '../fetchClient'
  * const exists = await checkEmailExists("email@example.com")
  * ```
  */
-export const checkEmailExists = async (email: UserType["email"]): Promise<boolean> => {
+export const checkEmailExists = async (
+  email: UserType["email"]
+): Promise<boolean> => {
 
   // Vérifie si l'email existe en effectuant une requête POST à l'API
   const result = await fetchClient<{ exists: boolean }>({

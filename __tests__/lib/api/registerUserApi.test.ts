@@ -16,7 +16,7 @@ describe('registerUser', () => {
     lastname: "Doe",
     date_of_birth: "2000-01-01",
     country: "France",
-    password: "securePassword123"
+    password: "secure§Password123"
   }
 
   beforeEach(() => {

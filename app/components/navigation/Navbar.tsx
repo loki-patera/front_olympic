@@ -1,6 +1,6 @@
 'use client'
 
-import { useCart } from '../../context/CartContext'
+import { useCart, useUser } from '../../context'
 import { useRouter } from 'next/navigation'
 import { CustomButton } from '../shared/CustomButton'
 import { Logo } from '../shared/Logo'
@@ -17,6 +17,8 @@ import { CartType } from '../../types'
  * ```
  */
 export const Navbar = (): React.JSX.Element => {
+
+  const { user, logout } = useUser()
 
   // Récupération du contexte pour le panier
   const { cart, cartDetails } = useCart()
@@ -85,6 +87,12 @@ export const Navbar = (): React.JSX.Element => {
 
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 
+            {user && user.firstname && user.lastname && (
+              <span className="mr-2 font-semibold text-green-500 underline-offset-4 underline">
+                {user.firstname} {user.lastname}
+              </span>
+            )}
+
             {/* Menu du panier */}
             <NavMenu
               ariaLabel="Menu du panier"
@@ -108,10 +116,23 @@ export const Navbar = (): React.JSX.Element => {
               colorIcon="text-bluejo"
               variant="user"
               menuItems={[
-                { label: "Se connecter", href: "/pages/login" }
+                user
+                  ? {
+                      label: "",
+                      custom:
+                        <span
+                          className="block px-4 py-1 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden cursor-pointer"
+                          onClick={logout}
+                        >
+                          Déconnexion
+                        </span>
+                    }
+                  : {
+                      label: "Connexion",
+                      href: "/pages/login"
+                    }
               ]}
             />
-
           </div>
         </div>
       </div>

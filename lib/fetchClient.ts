@@ -58,7 +58,8 @@ export const fetchClient = async <T> ({
   const options: RequestInit = {
     method,
     headers,
-    ...(method === "POST" ? { body: JSON.stringify(data) } : {})
+    ...(method === "POST" ? { body: JSON.stringify(data) } : {}),
+    ...(endpoint.startsWith("/api/") ? { credentials: "include" } : {})
   }
 
   // Effectue la requête à l'API en utilisant l'URL de base et le point de terminaison spécifié

@@ -54,7 +54,7 @@ export const POST = async (
       return res
     }
 
-    // Retourne une réponse contenant les données de connexion de l'utilisateur
+    // Si la connexion échoue, retourne une réponse JSON avec le statut de la réponse du backend
     return NextResponse.json(data, { status: response.status })
   
   } catch (error) {

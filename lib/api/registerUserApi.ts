@@ -1,7 +1,13 @@
 import { UserType } from '../../app/types'
 import { fetchClient } from '../fetchClient'
 
-interface RegisterUserResponse {
+/**
+ * Type de réponse pour l'enregistrement d'un nouvel utilisateur.
+ *
+ * @property {boolean} success - Indique si l'enregistrement a réussi.
+ * @property {Record<string, string[]>} [errors] - Détails des erreurs si l'enregistrement a échoué.
+ */
+export interface RegisterUserResponse {
   success: boolean
   errors?: Record<string, string[]>
 }

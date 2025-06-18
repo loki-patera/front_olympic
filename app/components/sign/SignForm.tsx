@@ -491,7 +491,7 @@ export const SignForm = (): React.JSX.Element => {
       } catch (error) {
 
         // Met à jour l'état des erreurs globales avec un message d'erreur
-        setGlobalError("Échec de la connexion. Vérifiez votre mot de passe.")
+        setGlobalError("La connexion a échoué suite à un problème technique. Veuillez réessayer plus tard.")
 
       } finally {
 
@@ -664,11 +664,6 @@ export const SignForm = (): React.JSX.Element => {
 
         // Si l'email existe, passe à l'étape de connexion
         setIsSignIn(true)
-
-      } else {
-
-        // Si l'email n'existe pas, passe à l'étape de création de compte
-        setIsBeforeSignUp(true)
       }
 
     } catch (error) {
@@ -711,13 +706,11 @@ export const SignForm = (): React.JSX.Element => {
         !isFirstnameValid ||            // Prénom invalide ou
         !isLastnameValid ||             // Nom invalide ou
         !isBirthDateValid ||            // Date de naissance invalide ou
-        !isCountryValid ||              // Pays invalide ou
-        (blockingField &&               // Si un champ est bloquant
-          (!isSignUp                        // Si on n'est pas à l'étape finale de création de compte
-            ? ["email", "firstname", "lastname", "date_of_birth", "country"].includes(blockingField)
-            : ["password", "confirmPassword"].includes(blockingField)
-          )
-        )
+        !isCountryValid                 // Pays invalide
+      )) ||
+      (isSignUp && (                  // Si on est à l'étape finale de création de compte
+        !isPasswordValid ||             // Mot de passe invalide ou
+        !isConfirmPasswordValid         // Mot de passe de confirmation invalide
       ))
     )
   
@@ -868,7 +861,7 @@ export const SignForm = (): React.JSX.Element => {
                   <CustomButton
                     className="w-full bg-bluejo px-3 py-1.5 text-sm/6 text-white"
                     disabled={isButtonDisabled}
-                    label={loading ? "Vérification..." : "Créer un nouveau compte"}
+                    label="Créer un nouveau compte"
                     type="button"
                     // Gestion du clic pour la création de compte
                     onClick={handleCreateAccount}

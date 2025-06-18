@@ -86,7 +86,8 @@ describe('fetchClient', () => {
     // Vérifie que la fonction `fetch` a été appelée avec les bons arguments
     expect(fetch).toHaveBeenCalledWith('/api/test', {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
     })
 
     // Vérifie que le résultat retourné est celui attendu

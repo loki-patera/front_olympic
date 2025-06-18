@@ -143,10 +143,6 @@ export const validateBirthDate = (value: UserType["date_of_birth"]): FieldError 
     // Si la date de naissance est postérieure à la date minimale, retourne un message d'erreur
     return { message: "Vous devez avoir au moins 18 ans pour créer un compte.", type: "warning" }
   }
-  if (birth < new Date(1900, 0, 1)) {
-    // Si la date de naissance est antérieure à 1900, retourne un message d'erreur
-    return { message: "La date de naissance doit être postérieure à 1900.", type: "warning" }
-  }
 
   // Retourne `undefined` si la date de naissance est valide
   return undefined

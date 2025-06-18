@@ -1,7 +1,13 @@
 import { UserType } from '../../app/types'
 import { fetchClient } from '../fetchClient'
 
-type LoginResponse = { success: true } | { detail: string }
+/**
+ * Type de réponse pour la connexion d'un utilisateur.
+ * 
+ * @property {boolean} success - Indique si la connexion a réussi.
+ * @property {string} [detail] - Détails de l'erreur si la connexion a échoué.
+ */
+export type LoginResponse = { success: true } | { detail: string }
 
 /**
  * Fonction pour connecter un utilisateur existant.

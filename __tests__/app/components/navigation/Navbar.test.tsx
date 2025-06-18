@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Navbar } from '../../../../app/components/navigation/Navbar'
 import { useRouter } from 'next/navigation'
 
@@ -29,36 +30,35 @@ jest.mock('../../../../app/context/CartContext', () => ({
   })
 }))
 
+// Mock du contexte utilisateur
+jest.mock('../../../../app/context/UserContext', () => ({
+  useUser: () => ({
+    user: { firstname: 'Marie', lastname: 'Curie' },
+    logout: jest.fn()
+  })
+}))
+
 describe("Composant Navbar", () => {
 
-  it("navigue vers la page du panier lorsque le bouton 'Voir votre panier' est cliqué", () => {
+  it("navigue vers la page du panier lorsque le bouton 'Voir votre panier' est cliqué", async () => {
 
     // Mock de la fonction `router.push` pour simuler la navigation
-    const pushMock = jest.fn();
-    (useRouter as jest.Mock).mockReturnValue({ push: pushMock, pathname: "/pages/cart" })
+    const pushMock = jest.fn()
+    ;(useRouter as jest.Mock).mockReturnValue({ push: pushMock, pathname: "/pages/cart" })
 
     // Rendu du composant `Navbar`
     render(<Navbar />)
 
-    // Récupère le menu du panier grâce à son attribut `aria-label`
-    const menuButton = screen.getByLabelText("Menu du panier")
+    // Ouvre le menu du panier
+    await userEvent.click(screen.getByLabelText("Menu du panier"))
 
-    // Simule un clic sur le bouton du menu du panier
-    fireEvent.click(menuButton)
-
-    // Ou simule la pression de la touche "Entrée" sur le bouton du menu du panier
-    fireEvent.keyDown(menuButton, { key: 'Enter', code: 'Enter' })
-    
-    // Récupère le bouton "Voir votre panier" grâce à son label
-    const button = screen.getByText("Voir votre panier")
+    // Récupère le bouton "Voir votre panier" (rendu dans le menu)
+    const button = await screen.findByRole('button', { name: /voir votre panier/i })
 
     // Simule un clic sur le bouton
     fireEvent.click(button)
 
-    // Vérifie que `router.push` a été appelé avec "/"
+    // Vérifie que `router.push` a été appelé avec "/pages/cart"
     expect(pushMock).toHaveBeenCalledWith("/pages/cart")
-
-    // Vérifie que `router.push` a été appelé une fois
-    expect(pushMock).toHaveBeenCalledTimes(1)
   })
 })

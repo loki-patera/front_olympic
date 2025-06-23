@@ -1,4 +1,4 @@
-import { FieldProps } from './FieldProps'
+import { FieldProps } from '../../form/fields/fieldProps'
 
 /**
  * Composant `FirstNameField` pour afficher un champ de saisie pour le prénom.
@@ -36,7 +36,7 @@ export const FirstNameField: React.FC<FieldProps> = ({
           type="text"
           required
           autoComplete="given-name"
-          placeholder="John"
+          placeholder="Jean-Charles"
           value={value}
           // Gestion des changements dans le champ prénom
           onChange={onChange}

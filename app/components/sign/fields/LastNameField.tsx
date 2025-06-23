@@ -1,4 +1,4 @@
-import { FieldProps } from './FieldProps'
+import { FieldProps } from '../../form/fields/fieldProps'
 
 /**
  * Composant `LastNameField` pour afficher un champ de saisie pour le nom de famille.
@@ -36,7 +36,7 @@ export const LastNameField: React.FC<FieldProps> = ({
           type="text"
           required
           autoComplete="family-name"
-          placeholder="Doe"
+          placeholder="Dupont"
           value={value}
           // Gestion des changements dans le champ nom
           onChange={onChange}

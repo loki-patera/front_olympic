@@ -1,4 +1,4 @@
-import { FieldProps } from './FieldProps'
+import { FieldProps } from '../../form/fields/fieldProps'
 
 /**
  * Composant `ConfirmPasswordField` pour afficher un champ de saisie pour la confirmation du mot de passe.

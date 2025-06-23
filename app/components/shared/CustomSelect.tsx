@@ -94,7 +94,7 @@ export function CustomSelect<T>({
           {defaultLabel && (
             <ListboxOption
               value={null}
-              className="group relative cursor-default py-2 pr-9 pl-3 text-gray-900 select-none data-focus:bg-bluejo data-focus:text-white
+              className="group relative cursor-default py-2 pr-3 pl-3 text-gray-900 select-none data-focus:bg-bluejo data-focus:text-white
                 data-focus:outline-hidden"
             >
               <div className="flex items-center">
@@ -109,7 +109,7 @@ export function CustomSelect<T>({
             <ListboxOption
               key={getOptionKey(option)}
               value={option}
-              className="group relative cursor-default py-2 pr-9 pl-3 text-gray-900 select-none data-focus:bg-bluejo data-focus:text-white
+              className="group relative cursor-default py-2 pr-3 pl-3 text-gray-900 select-none data-focus:bg-bluejo data-focus:text-white
                 data-focus:outline-hidden"
             >
               <div className="flex items-center">

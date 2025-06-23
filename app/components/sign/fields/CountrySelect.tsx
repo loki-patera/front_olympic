@@ -1,4 +1,4 @@
-import { FieldProps } from './FieldProps'
+import { FieldProps } from '../../form/fields/fieldProps'
 
 /**
  * Interface `CountrySelectProps` définissant les propriétés du composant {@link CountrySelect}.

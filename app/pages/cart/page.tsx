@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { CustomButton } from '../../components/shared/CustomButton'
-import { useCart } from '../../context'
+import { useCart, useUser } from '../../context'
 import { formatDate, formatTime } from '../../utils/dateUtils'
 import { useSportStore } from '../../stores'
-import CustomSlideOver from '../../components/shared/CustomSlideOver'
+import { SpectatorDrawer, PaymentDrawer } from '../../components/drawers'
 
 /**
  * Composant `Cart` pour afficher la page du panier de réservations de l'application.
@@ -15,6 +15,9 @@ export default function Cart(): React.JSX.Element {
 
   // Récupération du contexte pour le panier
   const { cartDetails, removeFromCart } = useCart()
+
+  // Récupération du contexte pour l'utilisateur
+  const { user } = useUser()
 
   // Fonction pour supprimer une réservation du panier
   const handleRemove = (id_event: number, id_offer: number): void => {
@@ -33,15 +36,31 @@ export default function Cart(): React.JSX.Element {
   // Récupération de la fonction setSport du store pour gérer le retour à la page de réservation
   const { setSport } = useSportStore()
 
-  // État pour ouvrir/fermer le SlideOver
-  const [isSlideOverOpen, setIsSlideOverOpen] = useState(false)
+  const [drawerType, setDrawerType] = useState<"spectator" | "payment" | null>(null)
+
+  const [drawerIdx, setDrawerIdx] = useState<number | null>(null)
 
   return (
 
     <main>
 
-      {/* SlideOver affiché si isSlideOverOpen est true */}
-      {isSlideOverOpen && <CustomSlideOver />}
+      {drawerType === 'spectator' && drawerIdx !== null && (
+        <SpectatorDrawer
+          open={true}
+          onClose={() => {
+            setDrawerType(null)
+            setDrawerIdx(null)
+          }}
+        />
+      )}
+
+      {drawerType === 'payment' && (
+        <PaymentDrawer
+          open={true}
+          onClose={() => setDrawerType(null)}
+          total={total}
+        />
+      )}
 
       <div className="max-w-2xl mx-auto py-16 px-6 lg:px-0">
         <h1 className="text-3xl text-center sm:text-4xl font-extrabold text-gray-400">
@@ -75,23 +94,41 @@ export default function Cart(): React.JSX.Element {
                         </div>
                       </div>
 
-                      <p className="mb-2 text-base font-bold text-gray-500">
-                        <span>{event.location.name}</span>
-                        <span className="text-yellowjo"> | </span>
-                        <span className="text-gray-900">{event.location.city}</span>
-                      </p>
+                      <div className="flex justify-between items-center">
+                        <p className="mb-2 text-base font-bold text-gray-500">
+                          <span>{event.location.name}</span>
+                          <span className="text-yellowjo"> | </span>
+                          <span className="text-gray-900">{event.location.city}</span>
+                        </p>
+                        <p className="text-sm font-bold text-yellowjo-dark">- {offer.discount} %</p>
+                      </div>
                       
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <p className="text-sm font-bold text-orange-500">
                           {offer.type}
                         </p>
                         <p className="text-base font-bold text-green-500">
-                          {(event.price * offer.number_seats * (1 - offer.discount / 100)).toFixed(2)} €
+                          {(event.price * offer.number_seats * (1 - offer.discount / 100)).toLocaleString(
+                              'fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                            )
+                          } €
                         </p>
                       </div>
                     </div>
 
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-4 flex justify-between items-center">
+                      <div className="flex justify-between items-center space-x-2">
+                        <p className="text-sm text-gray-500">Spectateurs</p>
+                        <CustomButton
+                          className="text-xs text-gray-700 py-0.5 bg-yellowjo-light active:bg-yellowjo"
+                          label="Compléter"
+                          onClick={() => {
+                            setDrawerType("spectator")
+                            setDrawerIdx(idx)
+                          }}
+                        />
+                      </div>
+                      
                       <CustomButton
                         className="text-xs text-white py-0.5 bg-red-500 active:bg-red-700 shadow-red-200"
                         label="Supprimer"
@@ -112,12 +149,12 @@ export default function Cart(): React.JSX.Element {
           <div className="space-y-4">
             <div className="flex items-center justify-between text-2xl font-bold text-gray-900">
               <p>Total</p>
-              <p>{total.toFixed(2)} €</p>
+              <p>{total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</p>
             </div>
           </div>
 
-          {/* Alertes panier/connexion */}
-          {cartDetails.length === 0 ? (
+          {/* Affichage conditionnel des messages */}
+          {cartDetails.length === 0 && !user && (
             <div className="mt-6 space-y-2 flex flex-col items-center">
               <div
                 className="px-4 py-1 rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs flex items-center justify-center"
@@ -132,7 +169,9 @@ export default function Cart(): React.JSX.Element {
                 Connectez-vous pour valider votre panier !
               </div>
             </div>
-          ) : (
+          )}
+
+          {cartDetails.length > 0 && !user && (
             <div
               className="mt-6 px-4 py-1 w-fit mx-auto rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs"
               role="alert"
@@ -141,13 +180,30 @@ export default function Cart(): React.JSX.Element {
             </div>
           )}
 
+          {cartDetails.length === 0 && user && (
+            <div
+              className="mt-6 px-4 py-1 w-fit mx-auto rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs"
+              role="alert"
+            >
+              Ajoutez au moins une réservation !
+            </div>
+          )}
+
+          {cartDetails.length > 0 && user && (
+            <div
+              className="mt-6 px-4 py-1 w-fit mx-auto rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-800 text-xs"
+              role="alert"
+            >
+              Entrez les données des spectateurs pour chaque réservation
+            </div>
+          )}
+
           <div className="flex justify-center mt-8">
             <CustomButton
-              className="w-56 text-base text-white py-2 bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
-              disabled
+              className="w-56 py-2 text-base text-white bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
+              disabled={cartDetails.length === 0 || !user}
               label="Valider votre panier"
-              // Ouvre le SlideOver au clic
-              onClick={() => setIsSlideOverOpen(true)}
+              onClick={() => setDrawerType("payment")}
             />
           </div>
 

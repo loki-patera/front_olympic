@@ -1,9 +1,19 @@
-import { ChangeEventHandler, FocusEventHandler, useState } from 'react'
+import { ChangeEventHandler, FocusEventHandler, FormEventHandler, useState } from 'react'
 import { CustomButton } from '../shared/CustomButton'
 import { CardNameField, CardNumberField, CVCField, ExpirationDateField } from './fields'
 import { cardNameValidate, cardNumberValidate, cvcValidate, ErrorFieldType, expirationDateValidate } from './validations'
+import { useCart } from '../../context'
+import { processPayment } from '../../../lib/api'
 
-export const PaymentForm= ():React.JSX.Element => {
+export interface PaymentFromProps {
+  onSuccess?(): void
+}
+
+export const PaymentForm: React.FC<PaymentFromProps> = ({
+  onSuccess
+}) => {
+
+  const { cart, clearCart } = useCart()
 
   // --------------------------------------------------------------------- États ---------------------------------------------------------------------
 
@@ -46,6 +56,9 @@ export const PaymentForm= ():React.JSX.Element => {
   // État local pour savoir si le champ CVC a été touché
   const [isCVCTouched, setIsCVCTouched] = useState<boolean>(false)
 
+
+  // État local pour gérer le chargement
+  const [loading, setLoading] = useState<boolean>(false)
   
   // État local pour le champ bloquant
   const [blockingField, setBlockingField] = useState<string | null>(null)
@@ -270,6 +283,114 @@ export const PaymentForm= ():React.JSX.Element => {
     validateCVC(cvc)
   }
 
+  // ------------------------------------------------------------ Soumission du formulaire -----------------------------------------------------------
+
+  // Fonction pour gérer la soumission du formulaire de paiement
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+
+    // Empêche le comportement par défaut du formulaire
+    e.preventDefault()
+
+    // Réinitialise les erreurs globales
+    setGlobalError("")
+
+    // Met à jour l'état de chargement
+    setLoading(true)
+
+    try {
+      // Appelle l'API pour traiter le paiement et enregistrer la réservation
+      const result = await processPayment({
+        card_number: cardNumber,
+        card_name: cardName,
+        expiration_date: expirationDate,
+        cvc: cvc,
+        cart
+      })
+
+      if (result.success) {
+
+        // Réinitialise les champs du formulaire après un paiement réussi
+        setCardNumber("")
+        setIsCardNumberValid(false)
+        setIsCardNumberTouched(false)
+        setCardName("")
+        setIsCardNameValid(false)
+        setIsCardNameTouched(false)
+        setExpirationDate("")
+        setIsExpirationDateValid(false)
+        setIsExpirationDateTouched(false)
+        setCVC("")
+        setIsCVCValid(false)
+        setIsCVCTouched(false)
+
+        // Réinitialise les erreurs de champ et les erreurs globales
+        setFieldErrors({})
+        setGlobalError("")
+
+        // Vide le panier après un paiement réussi
+        clearCart()
+
+        // Appelle la fonction de succès pour fermer le formulaire de paiement
+        if (onSuccess) onSuccess()
+
+      } else if (result.errors) {
+
+        // Récupération des erreurs du résultat de l'API
+        const errors: Record<string, string[]> = result.errors
+
+        // Initialisation d'un objet pour stocker les erreurs de champ
+        const newFieldErrors: Record<string, ErrorFieldType> = {}
+
+        // Parcours des erreurs et ajout dans l'objet `newFieldErrors`
+        Object.entries(errors).forEach(([field, messages]) => {
+          if (Array.isArray(messages) && messages.length > 0) {
+            newFieldErrors[field] = {
+              message: messages[0],
+              type: "error"
+            }
+          }
+        })
+
+        // Met à jour l'état des erreurs de champ avec les nouvelles erreurs
+        setFieldErrors(newFieldErrors)
+
+        // Marque les champs en erreur comme touchés et invalides
+        if (errors.card_number) {
+          setIsCardNumberTouched(true)
+          setIsCardNumberValid(false)
+          setBlockingField("cardNumber")
+        }
+        if (errors.card_name) {
+          setIsCardNameTouched(true)
+          setIsCardNameValid(false)
+          setBlockingField("cardName")
+        }
+        if (errors.expiration_date) {
+          setIsExpirationDateTouched(true)
+          setIsExpirationDateValid(false)
+          setBlockingField("expirationDate")
+        }
+        if (errors.cvc) {
+          setIsCVCTouched(true)
+          setIsCVCValid(false)
+          setBlockingField("cvc")
+        }
+      }
+    } catch (error) {
+
+      // Réinitialise les erreurs de champ
+      setFieldErrors({})
+
+      // Met à jour l'état des erreurs globales
+      setGlobalError("Le paiement a échoué suite à un problème technique. Veuillez réessayer plus tard.")
+    
+    } finally {
+
+      // Réinitialise l'état de chargement
+      setLoading(false)
+    }
+  }
+
   // ------------------------------------------------------ Gestion du bouton pour le paiement -------------------------------------------------------
 
   const isButtonDisabled =
@@ -310,7 +431,7 @@ export const PaymentForm= ():React.JSX.Element => {
   return (
 
     <>
-      <form className="space-y-2">
+      <form className="space-y-2" onSubmit={handleSubmit}>
         <div className="mt-6 grid grid-cols-4 gap-y-4 gap-x-4">
 
           <CardNumberField
@@ -347,13 +468,15 @@ export const PaymentForm= ():React.JSX.Element => {
         </div>
 
         <CustomButton
-          className="w-full mt-4 py-1.5 text-base text-white bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
-          disabled={isButtonDisabled}
-          label="Procéder au paiement"
+          className="w-full my-2 py-1.5 text-base text-white bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
+          disabled={loading || isButtonDisabled}
+          label={loading ? "Vérification..." : "Procéder au paiement"}
+          type="submit"
         />
 
-        {renderErrors()}
       </form>
+
+      {renderErrors()}
 
       {globalError && (
         <div

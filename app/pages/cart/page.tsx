@@ -7,6 +7,7 @@ import { useCart, useUser } from '../../context'
 import { formatDate, formatTime } from '../../utils/dateUtils'
 import { useSportStore } from '../../stores'
 import { SpectatorDrawer, PaymentDrawer } from '../../components/drawers'
+import { PaymentSuccessModal } from '../../components/modals/PaymentSuccessModal'
 
 /**
  * Composant `Cart` pour afficher la page du panier de réservations de l'application.
@@ -36,9 +37,14 @@ export default function Cart(): React.JSX.Element {
   // Récupération de la fonction setSport du store pour gérer le retour à la page de réservation
   const { setSport } = useSportStore()
 
+  // États pour gérer l'affichage des tiroirs de spectateurs et de paiement
   const [drawerType, setDrawerType] = useState<"spectator" | "payment" | null>(null)
 
+  // État pour stocker l'index du tiroir de spectateur sélectionné
   const [drawerIdx, setDrawerIdx] = useState<number | null>(null)
+
+  // État pour gérer l'affichage de la fenêtre modale de succès lorsque le paiement est effectué
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false)
 
   return (
 
@@ -58,6 +64,7 @@ export default function Cart(): React.JSX.Element {
         <PaymentDrawer
           open={true}
           onClose={() => setDrawerType(null)}
+          onPaymentSuccess={() => setShowSuccessModal(true)}
           total={total}
         />
       )}
@@ -220,6 +227,13 @@ export default function Cart(): React.JSX.Element {
 
         </section>
       </div>
+
+      {showSuccessModal && (
+        <PaymentSuccessModal
+          open={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+        />
+      )}
     </main>
   )
 }

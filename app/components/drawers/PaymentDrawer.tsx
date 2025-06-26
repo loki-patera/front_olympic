@@ -4,12 +4,14 @@ import { DrawerProps } from './DrawerProps'
 import { PaymentForm } from '../form/PaymentForm'
 
 export interface PaymentDrawerProps extends DrawerProps {
+  onPaymentSuccess?(): void
   total: number
 }
 
 export const PaymentDrawer: React.FC<PaymentDrawerProps> = ({
   open,
   onClose,
+  onPaymentSuccess,
   total
 }) => {
 
@@ -37,7 +39,6 @@ export const PaymentDrawer: React.FC<PaymentDrawerProps> = ({
                       focus-visible:outline-hidden"
                   >
                     <span className="absolute -inset-2.5" />
-                    <span className="sr-only">Close panel</span>
                     <XMarkIcon aria-hidden="true" className="size-6" />
                   </button>
                 </div>
@@ -55,7 +56,12 @@ export const PaymentDrawer: React.FC<PaymentDrawerProps> = ({
                   </p>
                 </div>
 
-                <PaymentForm />
+                <PaymentForm
+                  onSuccess={() => {
+                    onClose()
+                    if (onPaymentSuccess) onPaymentSuccess()
+                  }}
+                />
               </div>
             </DialogPanel>
           </div>

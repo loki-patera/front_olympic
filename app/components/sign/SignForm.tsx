@@ -407,6 +407,23 @@ export const SignForm = (): React.JSX.Element => {
 
     // Marque le champ email comme touché
     setEmailTouched(true)
+
+    // Récupère l'état de validité de l'email en utilisant la fonction de validation
+    const error = validateEmail(email)
+
+    // Met à jour l'état de validité de l'email
+    setIsEmailValid(!error)
+
+    if (error) {
+      // Si l'email est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, email: error }))
+    } else {
+      // Si l'email est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { email, ...rest } = prev
+        return rest
+      })
+    }
   }
 
   // Fonction pour gérer la perte de focus du champ prénom
@@ -414,6 +431,23 @@ export const SignForm = (): React.JSX.Element => {
 
     // Marque le champ prénom comme touché
     setFirstnameTouched(true)
+
+    // Récupère l'état de validité du prénom en utilisant la fonction de validation
+    const error = validateFirstname(firstname)
+
+    // Met à jour l'état de validité du prénom
+    setIsFirstnameValid(!error)
+
+    if (error) {
+      // Si le prénom est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, firstname: error }))
+    } else {
+      // Si le prénom est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { firstname, ...rest } = prev
+        return rest
+      })
+    }
   }
 
   // Fonction pour gérer la perte de focus du champ nom
@@ -421,6 +455,23 @@ export const SignForm = (): React.JSX.Element => {
 
     // Marque le champ nom comme touché
     setLastnameTouched(true)
+
+    // Récupère l'état de validité du nom de famille en utilisant la fonction de validation
+    const error = validateLastname(lastname)
+    
+    // Met à jour l'état de validité du nom de famille
+    setIsLastnameValid(!error)
+
+    if (error) {
+      // Si le nom de famille est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, lastname: error }))
+    } else {
+      // Si le nom de famille est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { lastname, ...rest } = prev
+        return rest
+      })
+    }
   }
 
   // Fonction pour gérer la perte de focus du champ date de naissance
@@ -428,6 +479,23 @@ export const SignForm = (): React.JSX.Element => {
 
     // Marque le champ date de naissance comme touché
     setBirthDateTouched(true)
+
+    // Récupère l'état de validité de la date de naissance en utilisant la fonction de validation
+    const error = validateBirthDate(birthDate)
+
+    // Met à jour l'état de validité de la date de naissance
+    setIsBirthDateValid(!error)
+
+    if (error) {
+      // Si la date de naissance est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, date_of_birth: error }))
+    } else {
+      // Si la date de naissance est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { date_of_birth, ...rest } = prev
+        return rest
+      })
+    }
   }
 
   // Fonction pour gérer la perte de focus du champ pays
@@ -435,6 +503,23 @@ export const SignForm = (): React.JSX.Element => {
 
     // Marque le champ pays comme touché
     setCountryTouched(true)
+
+    // Récupère l'état de validité du pays en utilisant la fonction de validation
+    const error = validateCountry(country, countries)
+
+    // Met à jour l'état de validité du pays
+    setIsCountryValid(!error)
+
+    if (error) {
+      // Si le pays est invalide, met à jour l'état des erreurs de champ
+      setFieldErrors(prev => ({ ...prev, country: error }))
+    } else {
+      // Si le pays est valide, réinitialise les erreurs de champ
+      setFieldErrors(prev => {
+        const { country, ...rest } = prev
+        return rest
+      })
+    }
   }
 
   // Fonction pour gérer la perte de focus du champ mot de passe

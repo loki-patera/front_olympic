@@ -1,4 +1,4 @@
-import { FieldProps } from './FieldProps'
+import { FieldProps } from '../../form/fields/fieldProps'
 
 /**
  * Composant `EmailField` pour afficher un champ de saisie pour l'email.

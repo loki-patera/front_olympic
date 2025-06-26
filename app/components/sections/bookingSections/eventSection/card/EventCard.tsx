@@ -119,6 +119,9 @@ export const EventCard: React.FC<EventCardProps> = ({
   // État local pour gérer la récupération de la réduction de l'offre sélectionnée
   const [discountRecovered, setDiscountRecovered] = useState<number>()
 
+  // État local pour gérer l'offre sélectionnée
+  const [selectedOffer, setSelectedOffer] = useState<OfferType | null>(null)
+
   // Vérification si les valeurs sont définies pour effectuer le calcul
   const canCompute = seatSelected !== undefined && discountRecovered !== undefined && event.price !== undefined
 
@@ -139,9 +142,6 @@ export const EventCard: React.FC<EventCardProps> = ({
   
   // Récupération de la fonction d'ajout au panier depuis le contexte
   const { addToCart } = useCart()
-
-  // Récupération de l'offre sélectionnée
-  const selectedOffer = offers.find(offer => offer.number_seats === seatSelected && offer.discount === discountRecovered)
 
   // État local pour gérer la réinitialisation des sélections
   const [resetSelects, setResetSelects] = useState(false)
@@ -294,6 +294,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               offers={offers}
               seatSelected={seatSelected}
               setDiscountRecovered={setDiscountRecovered}
+              setSelectedOffer={setSelectedOffer}
             />
 
             <BookingAmount

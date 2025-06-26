@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react'
+import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { CustomButton } from './CustomButton'
 
 const paymentMethods = [
-  { id: 'credit-card', title: 'Carte de crédit' },
-  { id: 'paypal', title: 'PayPal' }
+  { id: "visa", title: "Visa" },
+  { id: "mastercard", title: "Mastercard" }
 ]
 
 export default function Example() {
@@ -41,6 +41,7 @@ export default function Example() {
                   </button>
                 </div>
               </TransitionChild>
+
               <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                 <div className="relative mt-24 flex-1 px-4 sm:px-6">
 
@@ -145,7 +146,7 @@ export default function Example() {
                     </div>
 
                     <CustomButton
-                      className="bg-bluejo text-white py-2 mt-6 w-full"
+                      className="w-full mt-6 py-2 text-base text-white bg-bluejo active:bg-bluejo-dark shadow-bluejo-light"
                       label="Payer"
                     />
                   </div>

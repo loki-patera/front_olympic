@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Cart from '../../../../app/pages/cart/page'
-import { useCart } from '../../../../app/context/CartContext'
+import { useCart, UserProvider } from '../../../../app/context'
 
 // Mock de la fonction `setSport` du store Zustand
 const setSportMock = jest.fn()
@@ -45,8 +45,12 @@ describe("Cart page", () => {
       removeFromCart: mockRemove
     })
   
-    // Rendu du composant Cart
-    render(<Cart />)
+    // Rendu du composant Cart dans le contexte UserProvider
+    render(
+      <UserProvider>
+        <Cart />
+      </UserProvider>
+    )
 
     // Clic sur le bouton "Supprimer"
     screen.getByText("Supprimer").click()
@@ -88,17 +92,25 @@ describe("Cart page", () => {
       removeFromCart: jest.fn()
     })
 
-    // Rendu du composant Cart
-    render(<Cart />)
+    // Rendu du composant Cart dans le contexte UserProvider
+    render(
+      <UserProvider>
+        <Cart />
+      </UserProvider>
+    )
 
     // Calcul attendu : (100*2*0.9) + (50*1*1) = 180 + 50 = 230
-    expect(screen.getByText("230.00 €")).toBeInTheDocument()
+    expect(screen.getByText(/230,00\s*€/)).toBeInTheDocument()
   })
   
   it("appelle setSport(null) quand on clique sur 'Ajouter une réservation'", async () => {
   
-    // Rendu du composant Cart
-    render(<Cart />)
+    // Rendu du composant Cart dans le contexte UserProvider
+    render(
+      <UserProvider>
+        <Cart />
+      </UserProvider>
+    )
 
     // Simule un clic utilisateur
     const user = userEvent.setup()
@@ -118,8 +130,12 @@ describe("Cart page", () => {
       removeFromCart: jest.fn()
     })
   
-    // Rendu du composant Cart
-    render(<Cart />)
+    // Rendu du composant Cart dans le contexte UserProvider
+    render(
+      <UserProvider>
+        <Cart />
+      </UserProvider>
+    )
   
     // Vérifie que le message "Votre panier est vide" est affiché
     expect(screen.getByText("Votre panier est vide")).toBeInTheDocument()

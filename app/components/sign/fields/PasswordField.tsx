@@ -1,4 +1,4 @@
-import { FieldProps } from './FieldProps'
+import { FieldProps } from '../../form/fields/fieldProps'
 
 /**
  * Composant `PasswordField` pour afficher un champ de saisie pour le mot de passe.

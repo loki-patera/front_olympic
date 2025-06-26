@@ -306,7 +306,7 @@ describe("SignForm", () => {
 
     // Vérifie que l'erreur frontend est affichée
     await waitFor(() => {
-      expect(screen.getByText(/Ce pays ne fait pas partie de la liste des pays autorisés\./i)).toBeInTheDocument()
+      expect(screen.getByText(/Le pays est requis\./i)).toBeInTheDocument()
     })
   })
 

@@ -20,6 +20,10 @@ export type FieldError = {
  */
 export const validateEmail = (value: UserType["email"]): FieldError | undefined => {
 
+  if (!value) {
+    // Si le champ email est vide, retourne un message d'erreur
+    return { message: "L'adresse email est requise.", type: "warning" }
+  }
   if (value.length < 6) {
     // Si l'email contient moins de 6 caractères, retourne un message d'erreur
     return { message: "L'email doit contenir au moins 6 caractères.", type: "warning" }
@@ -32,7 +36,7 @@ export const validateEmail = (value: UserType["email"]): FieldError | undefined 
   // Regex pour valider l'email
   const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/
 
-  if (!emailRegex.test(value) && value !== "") {
+  if (!emailRegex.test(value)) {
     // Si l'email ne correspond pas au format requis, retourne un message d'erreur
     return {
       message: "L'email doit contenir au minimum un caractère avant et après le @, suivi d'un point et de 2 caractères minimum.",
@@ -53,6 +57,10 @@ export const validateEmail = (value: UserType["email"]): FieldError | undefined 
  */
 export const validateFirstname = (value: UserType["firstname"]): FieldError | undefined => {
 
+  if (!value) {
+    // Si le champ prénom est vide, retourne un message d'erreur
+    return { message: "Le prénom est requis.", type: "warning" }
+  }
   if (value.length < 2) {
     // Si le prénom contient moins de 2 caractères, retourne un message d'erreur
     return { message: "Le prénom doit contenir au moins 2 caractères.", type: "warning" }
@@ -65,7 +73,7 @@ export const validateFirstname = (value: UserType["firstname"]): FieldError | un
   // Regex pour valider le prénom
   const firstnameRegex = /^(?=.{2,50}$)[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+(?:-[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+)*$/u
 
-  if (!firstnameRegex.test(value) && value !== "") {
+  if (!firstnameRegex.test(value)) {
     // Si le prénom ne correspond pas au format requis, retourne un message d'erreur
     return {
       message: "Le prénom doit commencer par une majuscule, ne contenir que des lettres et peut comprendre des tirets dans les prénoms composés.",
@@ -86,6 +94,10 @@ export const validateFirstname = (value: UserType["firstname"]): FieldError | un
  */
 export const validateLastname = (value: UserType["lastname"]): FieldError | undefined => {
 
+  if (!value) {
+    // Si le champ nom de famille est vide, retourne un message d'erreur
+    return { message: "Le nom de famille est requis.", type: "warning" }
+  }
   if (value.length < 2) {
     // Si le nom de famille contient moins de 2 caractères, retourne un message d'erreur
     return { message: "Le nom de famille doit contenir au moins 2 caractères.", type: "warning" }
@@ -98,7 +110,7 @@ export const validateLastname = (value: UserType["lastname"]): FieldError | unde
   // Regex pour valider le nom de famille
   const lastnameRegex = /^(?=.{2,50}$)[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+(?:-[A-ZÀ-ÖÙ-Ý][a-zà-öù-ÿ]+)*$/u
 
-  if (!lastnameRegex.test(value) && value !== "") {
+  if (!lastnameRegex.test(value)) {
     // Si le nom de famille ne correspond pas au format requis, retourne un message d'erreur
     return {
       message: "Le nom de famille doit commencer par une majuscule, ne contenir que des lettres et peut comprendre des tirets dans les noms composés.",
@@ -118,6 +130,11 @@ export const validateLastname = (value: UserType["lastname"]): FieldError | unde
  * @return {FieldError | undefined} - Retourne un objet d'erreur si la date de naissance est invalide, sinon `undefined`
  */
 export const validateBirthDate = (value: UserType["date_of_birth"]): FieldError | undefined => {
+
+  if (!value) {
+    // Si le champ date de naissance est vide, retourne un message d'erreur
+    return { message: "La date de naissance est requise.", type: "warning" }
+  }
 
   // Regex pour valider la date de naissance
   const birthDateRegex = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/
@@ -158,6 +175,10 @@ export const validateBirthDate = (value: UserType["date_of_birth"]): FieldError 
  */
 export const validateCountry = (value: UserType["country"], countries: string[]): FieldError | undefined => {
 
+  if (!value) {
+    // Si le champ pays est vide, retourne un message d'erreur
+    return { message: "Le pays est requis.", type: "warning" }
+  }
   if (value.length > 75) {
     // Si le pays dépasse 75 caractères, retourne un message d'erreur
     return { message: "Le pays ne peut pas dépasser 75 caractères.", type: "warning" }

@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+/**
+ * API route interne pour récupérer les informations de l'utilisateur connecté.
+ *
+ * @param {NextRequest} request - Requête HTTP entrante.
+ * 
+ * @returns {Promise<NextResponse>} - Promesse de la réponse HTTP contenant les informations de l'utilisateur.
+ */
 export const GET = async (
   request: NextRequest
 ): Promise<NextResponse> => {

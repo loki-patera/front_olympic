@@ -18,7 +18,7 @@ describe("LastNameField", () => {
     render(<LastNameField {...defaultProps} />)
 
     // Vérification que le champ nom est présent avec le placeholder "Doe"
-    expect(screen.getByPlaceholderText(/Doe/i)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/Dupont/i)).toBeInTheDocument()
   })
 
   it("affiche une bordure rouge si non valide et touché", () => {
@@ -27,7 +27,7 @@ describe("LastNameField", () => {
     render(<LastNameField {...defaultProps} isValid={false} touched={true} />)
 
     // Vérification que le champ nom a une bordure rouge
-    const input = screen.getByPlaceholderText(/Doe/i)
+    const input = screen.getByPlaceholderText(/Dupont/i)
     expect(input.className).toMatch(/outline-red-500/)
   })
 })

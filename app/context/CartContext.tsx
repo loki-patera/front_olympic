@@ -20,12 +20,14 @@ export interface CartItem {
  * 
  * @property cart - Tableau d'éléments de type `CartItem` représentant les réservations dans le panier.
  * @property addToCart - Fonction pour ajouter une réservation au panier.
+ * @property clearCart - Fonction pour vider le panier.
  * @property removeFromCart - Fonction pour supprimer une réservation du panier.
  * @property cartDetails - Détails des réservations dans le panier.
  */
 export interface CartContextType {
   cart: CartItem[]
   addToCart(item: CartItem): void
+  clearCart(): void
   removeFromCart(item: CartItem): void
   cartDetails: CartType[]
 }
@@ -77,6 +79,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setCart(prev => [...prev, item])
   }
 
+  // Fonction pour vider le panier
+  function clearCart() {
+    setCart([])
+    setCartDetails([])
+  }
+
   // Fonction pour supprimer une réservation du panier
   function removeFromCart(item: CartItem) {
     setCart(prev =>
@@ -101,7 +109,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     // Fournit le contexte du panier avec les détails et la fonction d'ajout aux composants enfants
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, cartDetails }}>
+    <CartContext.Provider value={{ cart, addToCart, clearCart, removeFromCart, cartDetails }}>
       {children}
     </CartContext.Provider>
   )
